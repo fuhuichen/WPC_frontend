@@ -1,0 +1,148 @@
+2023/06/08 14:28:14 -> author: Min.Hsieh , message: v1.00.00
+2023/06/07 12:07:13 -> author: Min.Hsieh , message: Update | container container | fix router reload logic
+2023/06/07 10:57:12 -> author: Min.Hsieh , message: Update | i18n
+2023/06/07 09:49:39 -> author: Ivan.chen , message: Update | i18n | adjust english typo
+2023/06/05 11:04:41 -> author: Ivan.chen , message: Update | views login, source camera | adjust i18n
+2023/06/05 09:18:28 -> author: Ivan.chen , message: Update | views login | add required field i18n
+2023/06/02 16:49:55 -> author: Ivan.chen , message: Update | views source camera | remove no use function
+2023/06/02 16:47:49 -> author: Ivan.chen , message: Update | views source camera | fix rtsp error when editing
+2023/06/02 16:24:36 -> author: Ivan.chen , message: Update | containers, views login | add login, logout function
+2023/06/02 15:51:19 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/06/02 15:50:42 -> author: Ivan.chen , message: Update | container | remove no use items
+2023/06/02 15:50:40 -> author: TinaLin..., message: Merge branch 'origin/develop' into develop
+2023/06/02 15:50:16 -> author: TinaLin..., message: Update | env runtime-env| update api path
+2023/06/02 15:49:52 -> author: Ivan.chen , message: Update | package.json, config | adjust title, name, description
+2023/06/02 15:47:40 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/06/02 15:47:21 -> author: Ivan.chen , message: Update | views detect-list | adjust validateDate function
+2023/06/02 15:38:25 -> author: TinaLin..., message: Update | views detect-list | update date style
+2023/06/02 15:26:52 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/06/02 15:26:31 -> author: Ivan.chen , message: Update | views detect-list | adjust table order, i18n, time resolve
+2023/06/02 15:00:28 -> author: TinaLin..., message: Update | helpers server | update DetectiveRecordReads sort param source to cameraName
+2023/06/02 14:54:51 -> author: TinaLin..., message: Merge 'origin/develop' into develop
+2023/06/02 14:53:46 -> author: TinaLin..., message: Merge branch 'origin/develop' into develop
+2023/06/02 14:53:40 -> author: Ivan.chen , message: Update | views detect-list models | remove no use interface
+2023/06/02 14:53:20 -> author: TinaLin..., message: Update | helpers server | update DetectiveRecordReads sort param name to labelName
+2023/06/02 14:48:47 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/06/02 14:48:18 -> author: Ivan.chen , message: Update | views detect-list | adjust dialog, code style, date compare
+2023/06/02 14:30:48 -> author: Min.Hsieh , message: Update | helper server | remove unused code
+2023/06/02 14:28:07 -> author: Ivan.chen , message: Update | views detect-list | add handleErrorDialog
+2023/06/02 14:07:55 -> author: Ivan.chen , message: Update | views detect-list | set table data
+2023/06/02 13:34:29 -> author: Ivan.chen , message: Update | views target-list | adjust code style
+2023/06/02 10:58:01 -> author: Ivan.chen , message: Update | views target-list, detect-list, users, source camera, picture | remove no use comment of region
+2023/06/02 10:31:15 -> author: Ivan.chen , message: Update | views target-list | clear temp and original data
+2023/06/02 10:13:03 -> author: Ivan.chen , message: Update | views target-list | adjust convert data function
+2023/06/02 09:11:24 -> author: Ivan.chen , message: Update | views target-list | adjust convert data, add pre category function
+2023/06/01 17:06:02 -> author: Ivan.chen , message: Update | views target-list | move initoptions, replace for loop
+2023/06/01 16:45:45 -> author: Ivan.chen , message: Update | views source camera | remove no use function
+2023/06/01 16:43:17 -> author: Ivan.chen , message: Update | views source camera, target-list | adjust code style
+2023/06/01 16:11:06 -> author: Ivan.chen , message: Update | views source camera | convert fake data, adjust edit function, interface add param
+2023/06/01 15:35:33 -> author: Ivan.chen , message: Update | views source camera | adjust enum, isDisableSaveButton, code style
+2023/06/01 14:45:09 -> author: Ivan.chen , message: Update | views source camera | convert fake data with enum
+2023/06/01 14:05:20 -> author: Ivan.chen , message: Update | views source camera | remove no use dropdown error message
+2023/06/01 14:02:42 -> author: Ivan.chen , message: Update | views source models picture | remove no use interface and adjust code style
+2023/06/01 11:28:02 -> author: Ivan.chen , message: Update | views target-list | add type declaration, adjust disable button computed
+2023/06/01 10:42:31 -> author: Ivan.chen , message: Update | views target-list, users, source camera, source picture | add handleServerResponse function
+2023/06/01 10:33:14 -> author: Ivan.chen , message: Update | views target-list | add class name
+2023/06/01 10:16:35 -> author: Ivan.chen , message: Update | views target-list, source camera, source picture | adjust code style
+2023/06/01 10:05:17 -> author: Ivan.chen , message: Update | views target-list | adjust interface, type transform
+2023/06/01 09:58:32 -> author: Ivan.chen , message: Update | views target-list | add activate and deactivate api function
+2023/06/01 08:51:34 -> author: Ivan.chen , message: Update | views target-list | interface object_id change to string
+2023/06/01 08:35:09 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/05/31 17:48:55 -> author: TinaLin..., message: Update | helpers server | add detect record reads api
+2023/05/31 17:33:08 -> author: Ivan.chen , message: Update | views target-list | adjust table data, add activate button
+2023/05/31 15:20:15 -> author: Ivan.chen , message: Update | views target-list | get table data from API
+2023/05/31 14:16:22 -> author: Ivan.chen , message: Update | views detect-list | remove no use function
+2023/05/31 11:04:57 -> author: Ivan.chen , message: Update | views source camera | remove default value of device
+2023/05/31 10:21:00 -> author: Ivan.chen , message: Update | views source camera | adjust buttons style, use Enum
+2023/05/31 10:18:04 -> author: Ivan.chen , message: Update | views source picture | organize code
+2023/05/31 09:19:07 -> author: Ivan.chen , message: Update | views source camera | delete no use icons, organize code
+2023/05/31 09:13:50 -> author: Ivan.chen , message: Update | views source camera | adjust form page title, add i18n
+2023/05/31 09:00:28 -> author: Ivan.chen , message: Update | views source camera | adjust dialog message i18n
+2023/05/31 08:53:23 -> author: Ivan.chen , message: Update | views source camera | remove buttons, adjust function names
+2023/05/31 08:47:59 -> author: Ivan.chen , message: Update | views source camera | adjust fake data
+2023/05/30 17:47:46 -> author: Ivan.chen , message: Update | views source camera | add function of edit, delete
+2023/05/30 16:38:50 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/05/30 16:38:31 -> author: Ivan.chen , message: Update | views source camera | remove table slot
+2023/05/30 16:37:07 -> author: Ivan.chen , message: Update | helpers server | adjust interface, adjsut data length
+2023/05/30 16:36:04 -> author: Ivan.chen , message: Update | views source models camera | adjust interface
+2023/05/30 16:32:06 -> author: TinaLin..., message: Update | views source picture | update status color
+2023/05/30 16:27:18 -> author: Ivan.chen , message: Update | helpers server | type declaration, change data length
+2023/05/30 16:20:04 -> author: Ivan.chen , message: Update | views source picture | adjust scss
+2023/05/30 15:44:28 -> author: Ivan.chen , message: Update | helpers server | change fake data names
+2023/05/30 15:39:51 -> author: Ivan.chen , message: Update | views source picture | generate fake table data
+2023/05/30 15:39:30 -> author: Ivan.chen , message: Update | views source camera | generate fake table data
+2023/05/30 15:37:13 -> author: Ivan.chen , message: Update | helpers server | add SourcePictureReads, SourceCameraReads
+2023/05/30 15:16:07 -> author: Ivan.chen , message: Update | views users | close page loading when api error
+2023/05/30 15:14:12 -> author: Ivan.chen , message: Update | views detect-list | copy date
+2023/05/30 11:14:16 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/05/30 11:13:31 -> author: Ivan.chen , message: Update | views soruce camera | organize code order
+2023/05/30 11:05:29 -> author: TinaLin..., message: Merge branch 'origin/develop' into develop
+2023/05/30 11:03:08 -> author: TinaLin..., message: Merge branch 'origin/develop' into develop
+2023/05/30 11:02:41 -> author: TinaLin..., message: Update | helpers server | add target object switch api
+2023/05/30 11:00:25 -> author: Ivan.chen , message: Update | views target-list, soruce camera | organize code order, change function names
+2023/05/30 10:57:58 -> author: Ivan.chen , message: Update | views detect-list, users, soruce picture | adjust code style
+2023/05/30 10:38:36 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/05/30 10:37:40 -> author: Ivan.chen , message: Update | views target-list | adjust filterOptions
+2023/05/30 10:36:28 -> author: TinaLin..., message: Update | helpers server | add target object reads api
+2023/05/30 10:35:42 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/05/30 10:35:01 -> author: Ivan.chen , message: Update | views target-list | add init options
+2023/05/30 10:29:52 -> author: TinaLin..., message: Update | helpers server | add target object api
+2023/05/30 09:48:07 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/05/30 09:47:01 -> author: Ivan.chen , message: Update | views detect-list, target-list, users, source camera, source picture | add handleServerResponse function
+2023/05/30 09:31:10 -> author: TinaLin..., message: Update | env | update development api path
+2023/05/30 08:50:09 -> author: Ivan.chen , message: Update | views source camera | adjust code style, adjust typeChange function
+2023/05/29 17:35:18 -> author: Ivan.chen , message: Update | i18n
+2023/05/29 16:34:40 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/05/29 16:21:50 -> author: Ivan.chen , message: Update | views source camera | init options, remove default value of inference modal
+2023/05/29 15:45:15 -> author: TinaLin..., message: Update | helpers server | add login api
+2023/05/29 15:40:01 -> author: Ivan.chen , message: Update | views source camera | add search placeholder i18n
+2023/05/29 15:28:22 -> author: Ivan.chen , message: Update | views source camera | remove i18n on key
+2023/05/29 15:05:10 -> author: Ivan.chen , message: Update | views source camera | adjust interface of input error, move enum postition
+2023/05/29 14:19:29 -> author: Ivan.chen , message: Update | views source camera | add enum, move options into one interface
+2023/05/29 13:35:56 -> author: Ivan.chen , message: Update | views source camera | title name bind to input name field
+2023/05/29 13:28:51 -> author: Ivan.chen , message: Update | views source camera | remove class name space
+2023/05/29 13:06:59 -> author: Ivan.chen , message: Update | views target-list | add search placeholder i18n
+2023/05/29 13:00:54 -> author: Ivan.chen , message: Update | scss
+2023/05/29 12:59:11 -> author: Ivan.chen , message: Update | views source camera | adjust interface name
+2023/05/29 11:19:06 -> author: Ivan.chen , message: Update | views target-list | adjust dropdown interface
+2023/05/29 10:52:51 -> author: Ivan.chen , message: Update | views target-list | add i18n, adjust params name
+2023/05/29 10:03:37 -> author: Ivan.chen , message: Update | views target-list | adjust title i18n
+2023/05/29 10:01:41 -> author: Ivan.chen , message: Update | views source camera, picture | remove class name pt-5
+2023/05/29 09:56:16 -> author: Ivan.chen , message: Update | views detect-list, target-list, source camera | adjust class name
+2023/05/29 09:42:37 -> author: Ivan.chen , message: Update | views detect-list | adjust keyword's placeholder i18n
+2023/05/26 17:31:01 -> author: Ivan.chen , message: Update | views login, container | adjust login logic
+2023/05/26 17:13:52 -> author: Ivan.chen , message: Update | views detect-list target-list models | lowercase files name with dash
+2023/05/26 16:56:30 -> author: Ivan.chen , message: Update | views login | add page loading, dialog, remember me
+2023/05/26 15:21:18 -> author: Ivan.chen , message: Add | views login | add modal
+2023/05/26 15:13:22 -> author: Ivan.chen , message: Update | views source | adjust folder structure
+2023/05/26 14:53:53 -> author: Ivan.chen , message: Update | i18n
+2023/05/26 14:15:21 -> author: Ivan.chen , message: Update | views |  add table key of target-list, detect-list, source
+2023/05/26 13:48:24 -> author: Ivan.chen , message: Update | scss
+2023/05/26 11:00:44 -> author: Ivan.chen , message: Update | views detect-list | lowercase files name with dash
+2023/05/26 11:00:20 -> author: Ivan.chen , message: Update | views target-list | lowercase files name with dash
+2023/05/26 10:52:10 -> author: Ivan.chen , message: Update | i18n|  remove blank line
+2023/05/26 10:50:30 -> author: Ivan.chen , message: Update | congin router |  amend name
+2023/05/26 10:34:24 -> author: Ivan.chen , message: Update | scss |  add blank line
+2023/05/26 10:15:34 -> author: Ivan.chen , message: Merge branch 'origin/develop' into develop
+2023/05/26 10:11:42 -> author: TinaLin..., message: Update | views account | add fake data
+2023/05/26 09:53:45 -> author: Ivan.chen , message: Update | scss
+2023/05/26 09:53:28 -> author: Ivan.chen , message: Update | config router
+2023/05/26 09:51:38 -> author: Ivan.chen , message: Update | helps | add serviceRegexClass
+2023/05/26 09:47:37 -> author: Ivan.chen , message: Update | i18n
+2023/05/26 09:46:34 -> author: Ivan.chen , message: Add | views detectList
+2023/05/26 09:46:09 -> author: Ivan.chen , message: Add | views login
+2023/05/26 09:45:48 -> author: Ivan.chen , message: Add | views source
+2023/05/26 09:44:35 -> author: Ivan.chen , message: Add | views targetList
+2023/05/24 17:51:00 -> author: Min.Hsieh , message: Add | helper server
+2023/05/24 13:19:42 -> author: Min.Hsieh , message: Update | container container | add init version
+2023/05/24 12:01:58 -> author: TinaLin..., message: Add | views account
+2023/05/24 12:01:32 -> author: TinaLin..., message: Update | views | update home
+2023/05/24 12:01:07 -> author: TinaLin..., message: Update | i18n
+2023/05/24 12:00:51 -> author: TinaLin..., message: Update | containers container | add function and display ui
+2023/05/24 11:59:48 -> author: TinaLin..., message: Add | scss
+2023/05/24 11:58:52 -> author: TinaLin..., message: Add | stores | add loading and notification
+2023/05/24 11:58:12 -> author: TinaLin..., message: Add | models | add page
+2023/05/24 11:57:38 -> author: TinaLin..., message: Add | enums | add page and user-role
+2023/05/24 11:56:47 -> author: TinaLin..., message: Add | helpers utility
+2023/05/24 11:56:27 -> author: TinaLin..., message: Add | helpers user
+2023/05/24 11:52:26 -> author: TinaLin..., message: init

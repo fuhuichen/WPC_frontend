@@ -1,0 +1,13 @@
+{
+  "name": "wpc-ievent",
+  "description": "WPC iEvent",
+  "version": "1.0.0",
+  "srcversion": "1.00.00",
+  "frameworkversion": "3.2.2.2",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "@advantech/service-regex": "^1.6.4"
+  },
+  "devDependencies": {}
+}
