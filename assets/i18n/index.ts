@@ -164,6 +164,10 @@ export const I18n = {
         'en-US': 'Create',
         'zh-TW': '建立',
     },
+    'Router_/data': {
+        'en-US': 'Data',
+        'zh-TW': '數據',
+    },
     'Router_/edit': {
         'en-US': 'Edit',
         'zh-TW': '編輯',
@@ -476,6 +480,34 @@ export const I18n = {
     Download_Member_AttendenceEmail: {
         'en-US': 'Attendence Email',
         'zh-TW': 'Attendence Email',
+    },
+    Download_Member_CheckTime: {
+        'en-US': 'Check Time',
+        'zh-TW': 'Check Time',
+    },
+    Download_Member_ActionType: {
+        'en-US': 'Action Type',
+        'zh-TW': 'Action Type',
+    },
+    Download_Member_WPCPoint: {
+        'en-US': 'WPC Point',
+        'zh-TW': 'WPC Point',
+    },
+    Download_Member_TotalWPCPoint: {
+        'en-US': 'Total WPC Point',
+        'zh-TW': 'Total WPC Point',
+    },
+    Download_Member_CourseName: {
+        'en-US': 'Course Name',
+        'zh-TW': 'Course Name',
+    },
+    Download_Member_SiteName: {
+        'en-US': 'Site Name',
+        'zh-TW': 'Site Name',
+    },
+    Download_Member_ItemName: {
+        'en-US': 'Item Name',
+        'zh-TW': 'Item Name',
     },
     Download_Member_AttendenceData: {
         'en-US': 'Attendence Data',

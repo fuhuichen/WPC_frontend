@@ -19,7 +19,6 @@ import {} from '@/../components';
 //#endregion
 
 //#region Src
-import { WebPath } from '@/config';
 import {} from '@/helpers';
 //#endregion
 
@@ -65,7 +64,6 @@ export default class VuePageClass extends Vue {
                 RxOperator.takeUntil(this.stop$),
                 RxOperator.concatMap(async (x) => {
                     let to: string = undefined;
-                    console.log(x);
                     if (x.length > 0) {
                         to = x[0].href ?? x[0].child[0].href;
                     } else {

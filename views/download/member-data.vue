@@ -1,49 +1,11 @@
 <template>
     <div>
-        <div v-show="pageTable && tableView === 'review'">
-            <AicsLayoutPageTitle :text="$i18n['Router_/w-download/member']" />
+        <div>
+            <AicsLayoutPageTitle :text="$i18n['Router_/w-download/member']">
+                <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Button_Export" @click="searchReset" />
+            </AicsLayoutPageTitle>
 
             <div class="page">
-                <div class="pb-2">
-                    <div class="page--filter-line1">
-                        <div class="row-4">
-                            <AicsTextLabel :text="$i18n.Common_Keyword" />
-
-                            <AicsInputText
-                                size="14"
-                                variant="grayscale-primary"
-                                v-model="filterDataTemp.keyword"
-                                name="keyword"
-                                :debounce="50"
-                                :placeholder="$i18n.Download_Member_KeywordPlaceholder"
-                                :isWidth100Percent="true"
-                            />
-                        </div>
-
-                        <div>
-                            <AicsTextLabel text="" />
-
-                            <div class="page--filter-tool-buttons page--filter-tool-buttons--1">
-                                <AicsButton variant="primary" mode="filled" size="14" :text="$i18n.Button_Search" @click="searchData" />
-                            </div>
-                        </div>
-
-                        <div class="row-8">
-                            <AicsTextLabel text="" />
-
-                            <div class="page--filter-tool-buttons page--filter-tool-buttons--1">
-                                <AicsButton
-                                    variant="secondary"
-                                    mode="filled"
-                                    size="14"
-                                    :text="$i18n.Download_Member_AttendenceData"
-                                    @click="goDownloadTable"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <AicsCardContainer variant="1px">
                     <AicsTable
                         ref="mainTable"
@@ -60,8 +22,6 @@
                 </AicsCardContainer>
             </div>
         </div>
-
-        <MemberData v-if="pageTable && tableView === 'download'" />
 
         <AicsDialog
             :isShow="dialogData.isShow"
@@ -92,13 +52,14 @@ import * as RxOperator from 'rxjs/operators';
 //#endregion
 
 //#region Framework
-import { TableModel } from '@/../components';
+import { DateTimeService } from '@/../helpers';
+import { TableModel, InputDatetimeModel } from '@/../components';
 //#endregion
 
 //#region Src
 import {} from '@/config';
 import { EPageStep, EPageAction } from '@/enums';
-import { UtilityService, ServerNamespace, ResponseFilterService } from '@/helpers';
+import { UtilityService, ServerNamespace, ResponseFilterService, ServerService } from '@/helpers';
 import { IViews } from '@/models';
 import { ILoadingData, LoadingData } from '@/stores/loading';
 import { INotificationToastData, NotificationToastData } from '@/stores/notification-toast';
@@ -106,7 +67,7 @@ import { INotificationToastData, NotificationToastData } from '@/stores/notifica
 
 //#region Views
 import { ModelsMember as Model } from './models';
-import MemberData from '@/views/download/member-data.vue';
+
 //#endregion
 
 //#region Components Framework
@@ -140,7 +101,6 @@ import {
         AicsInputText,
         AicsInputDatetime,
         AicsImageSingle,
-        MemberData,
     },
 })
 export default class VuePageClass extends Vue {
@@ -173,8 +133,6 @@ export default class VuePageClass extends Vue {
         page: EPageStep.table,
         action: EPageAction.create,
     };
-
-    private tableView = 'review';
 
     private filterDataOriginal: Model.IFilterData = {
         keyword: '',
@@ -252,7 +210,6 @@ export default class VuePageClass extends Vue {
                 RxOperator.takeUntil(this.stop$),
                 RxOperator.concatMap(async (x) => {
                     this.searchReset();
-                    this.tableView = 'review';
 
                     if (this.pageItem.page === EPageStep.table) {
                         await this.initTable();
@@ -273,11 +230,16 @@ export default class VuePageClass extends Vue {
     //#region Init table
     private initTableColumns(): void {
         this.tableItem.columns = [
-            { type: 'checkbox', optionKey: 'objectId', valueKey: 'isChecked', isDisabledKey: 'isDisabled' },
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Member_QRCodeNumber, key: 'date' },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'labelImageSrc' },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'date' },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'labelImageSrc' },
+            { type: 'field', title: this.$i18n.Download_Member_CheckTime, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_ActionType, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_WPCPoint, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_TotalWPCPoint, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_CourseName, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_SiteName, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_ItemName, key: 'labelName' },
         ];
     }
 
@@ -322,12 +284,6 @@ export default class VuePageClass extends Vue {
 
         this.tableItem.paging.page = 1;
         await this.tableReload();
-    }
-
-    private goDownloadTable() {
-        this.$store.routerAction$.next(this.$i18n['Router_/data']);
-
-        this.tableView = 'download';
     }
     //#endregion
 
