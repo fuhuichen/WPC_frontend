@@ -34,6 +34,18 @@ export const I18n = {
         'en-US': 'Success count',
         'zh-TW': '成功筆數',
     },
+    Common_Edit: {
+        'en-US': 'Edit',
+        'zh-TW': '編輯',
+    },
+    Common_Create: {
+        'en-US': 'Create',
+        'zh-TW': '新增',
+    },
+    Common_Action: {
+        'en-US': 'Action',
+        'zh-TW': '動作',
+    },
     //#endregion
 
     //#region Button
@@ -60,6 +72,14 @@ export const I18n = {
     Button_Export: {
         'en-US': 'Export',
         'zh-TW': '匯出',
+    },
+    Button_Edit: {
+        'en-US': 'Edit',
+        'zh-TW': '編輯',
+    },
+    Button_Delete: {
+        'en-US': 'Delete',
+        'zh-TW': '刪除',
     },
     //#endregion
 
@@ -302,7 +322,7 @@ export const I18n = {
     },
     Source_Camera_Button_Create: {
         'en-US': 'Create',
-        'zh-TW': '建立',
+        'zh-TW': '新增',
     },
     Source_Camera_Action: {
         'en-US': 'Action',
@@ -460,6 +480,25 @@ export const I18n = {
     Download_Member_AttendenceData: {
         'en-US': 'Attendence Data',
         'zh-TW': '活動數據',
+    },
+    //#endregion
+
+    //#region Management Member
+    Management_Member_Name: {
+        'en-US': 'Name',
+        'zh-TW': 'Name',
+    },
+    Management_Member_Email: {
+        'en-US': 'Email',
+        'zh-TW': 'Email',
+    },
+    Management_Member_Password: {
+        'en-US': 'Password',
+        'zh-TW': 'Password',
+    },
+    Management_Member_Note: {
+        'en-US': 'Note',
+        'zh-TW': 'Note',
     },
     //#endregion
 

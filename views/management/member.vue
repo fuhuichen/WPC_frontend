@@ -1,18 +1,9 @@
 <template>
     <div>
         <div v-show="pageTable">
-            <AicsLayoutPageTitle :text="$i18n['Router_/w-user-management']">
+            <AicsLayoutPageTitle :text="$i18n['Router_/w-course-management']">
                 <div class="page--title-tool-buttons">
-                    <AicsButton
-                        variant="primary"
-                        mode="outline"
-                        size="14"
-                        :text="$i18n.Source_Camera_Button_Delete"
-                        :disabled="isDisabledDeleteItemsButton"
-                        @click="handleDelete"
-                    />
-
-                    <AicsButton variant="primary" mode="outline" size="14" :text="$i18n.Source_Camera_Button_Create" @click="pageToCreate" />
+                    <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Source_Camera_Button_Create" @click="pageToCreate" />
                 </div>
             </AicsLayoutPageTitle>
 
@@ -31,9 +22,16 @@
                     >
                         <template #action="props">
                             <template>
-                                <AicsButton size="14" variant="primary" mode="text" :beforeIconSrc="editSrc" @click="actionEdit(props.scope)" />
+                                <AicsButton
+                                    size="14"
+                                    variant="primary"
+                                    mode="outline"
+                                    :text="$i18n.Button_Edit"
+                                    class="mr-2"
+                                    @click="actionEdit(props.scope)"
+                                />
 
-                                <AicsButton size="14" variant="primary" mode="text" :beforeIconSrc="deleteSrc" @click="actionDelete(props.scope)" />
+                                <AicsButton size="14" variant="error" mode="outline" :text="$i18n.Button_Delete" @click="actionDelete(props.scope)" />
                             </template>
                         </template>
                     </AicsTable>
@@ -41,148 +39,91 @@
             </div>
         </div>
 
-        <div v-show="pageForm">
-            <AicsLayoutPageTitle :text="formPageTitle" />
+        <AicsModal customClass="modal-width-600" :isShow="showModal" :title="modalTitle" @close="closeModal">
+            <template #body>
+                <div>
+                    <AicsTextLabel :text="$i18n.Management_Member_Name" :required="true" />
 
-            <div class="page">
-                <AicsCardContainer variant="1px">
-                    <div class="page--form">
-                        <div class="row-4">
-                            <div>
-                                <AicsTextLabel :text="$i18n.Source_Camera_Name" :required="true" />
+                    <AicsInputText
+                        size="14"
+                        variant="grayscale-primary"
+                        v-model.trim="formData.name"
+                        name="name"
+                        :debounce="50"
+                        :placeholder="$i18n.Management_Member_Name"
+                        :isWidth100Percent="true"
+                        :isError="inputErrorData.nameInputError"
+                        :errorMessage="inputErrorMessage.name"
+                        @input="inputName"
+                    />
+                </div>
 
-                                <AicsInputText
-                                    size="14"
-                                    variant="grayscale-primary"
-                                    v-model.trim="formData.name"
-                                    name="name"
-                                    :debounce="50"
-                                    :placeholder="$i18n.Source_Camera_Name"
-                                    :isWidth100Percent="true"
-                                    :maxLength="20"
-                                    :isError="inputErrorData.nameInputError"
-                                    :errorMessage="inputErrorMessage.nameInputErrorMessage"
-                                    @input="handelNameChange"
-                                />
-                            </div>
+                <div class="mt-2">
+                    <AicsTextLabel :text="$i18n.Management_Member_Email" :required="true" />
 
-                            <div class="mt-3">
-                                <AicsTextLabel :text="$i18n.Source_Camera_Type" :required="true" />
+                    <AicsInputText
+                        size="14"
+                        variant="grayscale-primary"
+                        v-model.trim="formData.name"
+                        name="email"
+                        :debounce="50"
+                        :placeholder="$i18n.Management_Member_Email"
+                        :isWidth100Percent="true"
+                        :isError="inputErrorData.nameInputError"
+                        :errorMessage="inputErrorMessage.name"
+                        @input="inputName"
+                    />
+                </div>
 
-                                <AicsDropdown
-                                    size="14"
-                                    variant="grayscale-primary"
-                                    v-model="formData.type"
-                                    mode="outline"
-                                    :allowEmpty="false"
-                                    :options="filterOptions.typeOptions"
-                                    :isWidth100Percent="true"
-                                    :pagingI18n="pagingI18n"
-                                    :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                    :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
-                                />
-                            </div>
+                <div class="mt-2">
+                    <AicsTextLabel :text="$i18n.Management_Member_Password" :required="true" />
 
-                            <div class="mt-3">
-                                <AicsTextLabel :text="$i18n.Source_Camera_Inference_Modal" :required="true" />
+                    <AicsInputText
+                        size="14"
+                        variant="grayscale-primary"
+                        v-model.trim="formData.name"
+                        name="name"
+                        :debounce="50"
+                        :placeholder="$i18n.Management_Member_Password"
+                        :isWidth100Percent="true"
+                        :isError="inputErrorData.nameInputError"
+                        :errorMessage="inputErrorMessage.name"
+                        @input="inputName"
+                    />
+                </div>
 
-                                <AicsDropdown
-                                    size="14"
-                                    variant="grayscale-primary"
-                                    v-model="formData.modal"
-                                    mode="outline"
-                                    :allowEmpty="false"
-                                    :options="filterOptions.modalOptions"
-                                    :isError="inputErrorData.modalDropdownError"
-                                    :isWidth100Percent="true"
-                                    :pagingI18n="pagingI18n"
-                                    :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                    :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
-                                    @change="handleModalChange"
-                                />
-                            </div>
+                <div class="mt-2">
+                    <AicsTextLabel :text="$i18n.Management_Member_Note" />
 
-                            <div class="mt-3" v-if="isShowDeviceInput">
-                                <AicsTextLabel :text="$i18n.Source_Camera_Device" :required="true" />
+                    <AicsInputTextarea
+                        size="14"
+                        variant="grayscale-primary"
+                        v-model.trim="formData.name"
+                        name="note"
+                        :debounce="50"
+                        :placeholder="$i18n.Management_Member_Note"
+                        :isWidth100Percent="true"
+                        :isError="inputErrorData.nameInputError"
+                        :errorMessage="inputErrorMessage.name"
+                        @input="inputName"
+                    />
+                </div>
+            </template>
 
-                                <AicsDropdown
-                                    size="14"
-                                    variant="grayscale-primary"
-                                    v-model="formData.device"
-                                    mode="outline"
-                                    :allowEmpty="false"
-                                    :options="filterOptions.deviceOptions"
-                                    :isError="inputErrorData.deviceDropdownError"
-                                    :isWidth100Percent="true"
-                                    :pagingI18n="pagingI18n"
-                                    :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                    :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
-                                    @change="handleDeviceChange"
-                                />
-                            </div>
+            <template #footer>
+                <div>
+                    <AicsButton
+                        :text="$i18n.Button_Cancel"
+                        variant="grayscale-highlight"
+                        mode="text"
+                        style="margin-right: 16px"
+                        @click="closeModal"
+                    />
 
-                            <div class="mt-3" v-else>
-                                <AicsTextLabel :text="$i18n.Source_Camera_Enum_ECameraType_RTSP" :required="true" />
-
-                                <AicsInputText
-                                    size="14"
-                                    variant="grayscale-primary"
-                                    v-model="formData.rtsp"
-                                    name="rtsp"
-                                    :debounce="50"
-                                    :placeholder="$i18n.Source_Camera_RTSP_Placeholder"
-                                    :isWidth100Percent="true"
-                                    :isError="inputErrorData.rtspInputError"
-                                    :errorMessage="inputErrorMessage.rtspInputErrorMessage"
-                                    @input="handelRtspChange"
-                                />
-                            </div>
-
-                            <div class="mt-3">
-                                <AicsTextLabel :text="$i18n.Source_Camera_Remark" />
-
-                                <AicsInputText
-                                    size="14"
-                                    variant="grayscale-primary"
-                                    v-model="formData.remark"
-                                    name="remark"
-                                    :debounce="50"
-                                    :placeholder="$i18n.Source_Camera_Remark"
-                                    :isWidth100Percent="true"
-                                />
-                            </div>
-
-                            <div class="mt-3">
-                                <AicsTextLabel :text="$i18n.Source_Camera_Note" />
-
-                                <div class="textarea-box">
-                                    <AicsInputTextarea
-                                        size="14"
-                                        variant="grayscale-primary"
-                                        v-model="formData.note"
-                                        :placeholder="$i18n.Source_Camera_Note"
-                                        :isWidth100Percent="true"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="page--form--button">
-                            <AicsButton class="mr-2" variant="primary" mode="outline" size="14" :text="$i18n.Button_Cancel" @click="handleCancel" />
-
-                            <AicsButton
-                                variant="primary"
-                                mode="filled"
-                                size="14"
-                                :text="$i18n.Button_Save"
-                                :disabled="isDisableSaveButton"
-                                @click="handleSave"
-                            />
-                        </div>
-                    </div>
-                </AicsCardContainer>
-            </div>
-        </div>
+                    <AicsButton :text="$i18n.Button_Confirm" @click="confirmModal" />
+                </div>
+            </template>
+        </AicsModal>
 
         <AicsDialog
             :isShow="dialogData.isShow"
@@ -241,6 +182,7 @@ import {
     AicsInputText,
     AicsDropdown,
     AicsInputTextarea,
+    AicsModal,
 } from '@/../components';
 //#endregion
 
@@ -261,6 +203,7 @@ import {
         AicsInputText,
         AicsDropdown,
         AicsInputTextarea,
+        AicsModal,
     },
 })
 export default class VuePageClass extends Vue {
@@ -296,24 +239,12 @@ export default class VuePageClass extends Vue {
 
     private formDataOriginal: Model.IFormData = {
         name: '',
-        type: {
-            key: ServerNamespace.ISourceCameraType.RTSP,
-            value: this.$i18n[`Source_Camera_Enum_ECameraType_${ServerNamespace.ISourceCameraType.RTSP}`],
-        },
-        modal: null,
-        rtsp: '',
-        device: null,
-        remark: '',
+        email: '',
+        password: '',
         note: '',
     };
 
     private formData: Model.IFormData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
-
-    private filterOptions: Model.IFilterOptions = {
-        typeOptions: [],
-        modalOptions: [],
-        deviceOptions: [],
-    };
 
     private pagingI18n: DropdownModel.IPagingI18n = {
         selectAll: this.$i18n.Source_Camera_Dropdown_SelectAll,
@@ -332,15 +263,15 @@ export default class VuePageClass extends Vue {
     private inputErrorData: Model.IInputError = { ...this.inputErrorDataOriginal };
 
     private inputErrorMessage: Model.IInputErrorMessage = {
-        nameInputErrorMessage: '',
-        rtspInputErrorMessage: '',
+        name: '',
+        email: '',
+        password: '',
     };
 
     private saveButtonDisableOriginal: Model.ISaveButtonDisable = {
         name: true,
-        rtsp: true,
-        modal: true,
-        device: true,
+        email: true,
+        password: true,
     };
 
     private saveButtonDisable: Model.ISaveButtonDisable = { ...this.saveButtonDisableOriginal };
@@ -370,41 +301,15 @@ export default class VuePageClass extends Vue {
 
     private pagePath: string = undefined;
 
-    private editSrc: string = require('@/assets/images/icon/action/edit/normal.svg');
-    private deleteSrc: string = require('@/assets/images/icon/action/delete/normal.svg');
+    private showModal: boolean = false;
+    private modalTitle: string = this.$i18n.Common_Edit;
 
     private stop$: Rx.Subject<boolean> = new Rx.Subject();
     //#endregion
 
     //#region Computed
-    private get formPageTitle(): string {
-        if (!!this.formData.name) {
-            return this.formData.name;
-        }
-
-        if (this.pageItem.action === EPageAction.create) {
-            return this.$i18n['Source_Camera_Create'];
-        }
-
-        if (this.pageItem.action === EPageAction.edit) {
-            return this.$i18n['Source_Camera_Edit'];
-        }
-    }
-
-    private get selectedItems(): Model.ITableData[] {
-        return this.tableItem.data.filter((n) => !!n.isChecked);
-    }
-
-    private get isDisabledDeleteItemsButton(): boolean {
-        return this.selectedItems.length === 0;
-    }
-
     private get pageTable(): boolean {
         return this.pageItem.page === EPageStep.table;
-    }
-
-    private get pageForm(): boolean {
-        return this.pageItem.page === EPageStep.form;
     }
 
     private get tableApiParam(): Model.ITableApiParam {
@@ -417,24 +322,6 @@ export default class VuePageClass extends Vue {
         }
 
         return tempTableApiParam;
-    }
-
-    private get isShowDeviceInput(): boolean {
-        return this.formData.type.key === ServerNamespace.ISourceCameraType.Webcam;
-    }
-
-    private get isDisableSaveButton(): boolean {
-        if (this.formData.type.key === ServerNamespace.ISourceCameraType.RTSP) {
-            if (this.saveButtonDisable.name || this.saveButtonDisable.rtsp || this.saveButtonDisable.modal) {
-                return true;
-            }
-        } else if (this.formData.type.key === ServerNamespace.ISourceCameraType.Webcam) {
-            if (this.saveButtonDisable.name || this.saveButtonDisable.modal || this.saveButtonDisable.device) {
-                return true;
-            }
-        }
-
-        return false;
     }
     //#endregion
 
@@ -454,7 +341,6 @@ export default class VuePageClass extends Vue {
                 RxOperator.takeUntil(this.stop$),
                 RxOperator.concatMap(async (x) => {
                     if (this.pageItem.page === EPageStep.table) {
-                        await this.initOptions();
                         await this.initTable();
                     } else {
                         await this.pageToList();
@@ -473,13 +359,11 @@ export default class VuePageClass extends Vue {
     //#region Init table
     private initTableColumns(): void {
         this.tableItem.columns = [
-            { type: 'checkbox', optionKey: 'objectId', valueKey: 'isChecked', isDisabledKey: 'isDisabled' },
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Source_Camera_Name, key: 'name' },
-            { type: 'field', title: this.$i18n.Source_Camera_Type, key: 'type' },
-            { type: 'field', title: this.$i18n.Source_Camera_Inference_Modal, key: 'modal' },
-            { type: 'field', title: this.$i18n.Source_Camera_Remark, key: 'remark' },
-            { type: 'field', title: this.$i18n.Source_Camera_Action, key: 'action', useSlot: true },
+            { type: 'field', title: this.$i18n.Management_Member_Name, key: 'name' },
+            { type: 'field', title: this.$i18n.Management_Member_Email, key: 'type' },
+            { type: 'field', title: this.$i18n.Management_Member_Note, key: 'modal' },
+            { type: 'field', title: this.$i18n.Common_Action, key: 'action', useSlot: true },
         ];
     }
 
@@ -492,34 +376,6 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Init select option
-    private async initOptions(): Promise<void> {
-        let typeOptions = [
-            {
-                key: ServerNamespace.ISourceCameraType.RTSP,
-                value: this.$i18n[`Source_Camera_Enum_ECameraType_${ServerNamespace.ISourceCameraType.RTSP}`],
-            },
-            {
-                key: ServerNamespace.ISourceCameraType.Webcam,
-                value: this.$i18n[`Source_Camera_Enum_ECameraType_${ServerNamespace.ISourceCameraType.Webcam}`],
-            },
-        ];
-
-        let modalOptions = [
-            { key: 'Yolo V4', value: 'Yolo V4' },
-            { key: 'Another', value: 'Another' },
-        ];
-
-        let deviceOptions = [
-            { key: 'device 1', value: 'device 1' },
-            { key: 'device 2', value: 'device 2' },
-            { key: 'device 3', value: 'device 3' },
-            { key: 'device 4', value: 'device 4' },
-        ];
-
-        this.filterOptions.typeOptions = typeOptions;
-        this.filterOptions.modalOptions = modalOptions;
-        this.filterOptions.deviceOptions = deviceOptions;
-    }
     //#endregion
     //#endregion
 
@@ -529,7 +385,6 @@ export default class VuePageClass extends Vue {
         this.pageItem.page = EPageStep.table;
         this.pageItem.action = EPageAction.list;
 
-        await this.initOptions();
         await this.tableReload();
 
         this.$store.routerAction$.next('');
@@ -538,119 +393,38 @@ export default class VuePageClass extends Vue {
     }
 
     private async pageToCreate(): Promise<void> {
-        UtilityService.ScrollToTop();
-
-        this.pageItem.page = EPageStep.form;
-        this.pageItem.action = EPageAction.create;
-
-        this.$store.routerAction$.next(this.$i18n['Router_/create']);
-
-        this.formDataClear();
+        this.modalTitle = this.$i18n.Common_Create;
+        this.showModal = true;
     }
 
     private async pageToEdit(value: Model.ITableData): Promise<void> {
-        UtilityService.ScrollToTop();
+        this.modalTitle = this.$i18n.Common_Edit;
+        this.showModal = true;
+    }
 
-        this.pageItem.page = EPageStep.form;
-        this.pageItem.action = EPageAction.edit;
+    private closeModal() {
+        this.showModal = false;
+    }
 
-        this.$store.routerAction$.next(this.$i18n['Router_/edit']);
-
-        this.formDataClear();
-
-        if (value.name) {
-            this.formData.name = value['name'];
-        }
-
-        if (value.type) {
-            this.formData['type'] = {
-                key: ServerNamespace.ISourceCameraType[value['type']],
-                value: this.$i18n[`Source_Camera_Enum_ECameraType_${ServerNamespace.ISourceCameraType[value['type']]}`],
-            };
-        }
-
-        if (value.modal) {
-            this.formData.modal = { key: value['modal'], value: value['modal'] };
-        }
-
-        if (value.rtsp) {
-            this.formData.rtsp = value['rtsp'];
-        }
-
-        if (value.device) {
-            this.formData.device = { key: value['device'], value: value['device'] };
-        }
-
-        if (value.remark) {
-            this.formData.remark = value['remark'];
-        }
-
-        if (value.note) {
-            this.formData.note = value['note'];
-        }
-
-        this.validateForm();
+    private confirmModal() {
+        this.showModal = false;
     }
     //#endregion
 
     //#region Event input
-    private handelNameChange(): void {
+    private inputName(): void {
         if (!!this.formData.name) {
             this.inputErrorData.nameInputError = false;
 
             this.saveButtonDisable.name = false;
 
-            this.inputErrorMessage.nameInputErrorMessage = '';
+            this.inputErrorMessage.name = '';
         } else {
             this.inputErrorData.nameInputError = true;
 
             this.saveButtonDisable.name = true;
 
-            this.inputErrorMessage.nameInputErrorMessage = `${this.$i18n.Source_Camera_Name} ${this.$i18n.Form_Value_Required}`;
-        }
-    }
-
-    private handleModalChange(): void {
-        if (this.formData.modal) {
-            this.saveButtonDisable.modal = false;
-        } else {
-            this.saveButtonDisable.modal = true;
-        }
-    }
-
-    private handleDeviceChange(): void {
-        if (this.formData.device) {
-            this.saveButtonDisable.device = false;
-        } else {
-            this.saveButtonDisable.device = true;
-        }
-    }
-
-    private handelRtspChange(): void {
-        if (this.formData.type.key === ServerNamespace.ISourceCameraType.Webcam) {
-            return null;
-        }
-
-        if (!!this.formData.rtsp) {
-            if (new RegExp(RegexService.rtsp()).test(this.formData.rtsp)) {
-                this.inputErrorData.rtspInputError = false;
-
-                this.saveButtonDisable.rtsp = false;
-
-                this.inputErrorMessage.rtspInputErrorMessage = '';
-            } else {
-                this.inputErrorData.rtspInputError = true;
-
-                this.saveButtonDisable.rtsp = true;
-
-                this.inputErrorMessage.rtspInputErrorMessage = this.$i18n.Source_Camera_RTSP_Regex_Error;
-            }
-        } else {
-            this.inputErrorData.rtspInputError = true;
-
-            this.saveButtonDisable.rtsp = true;
-
-            this.inputErrorMessage.rtspInputErrorMessage = `${this.$i18n.Source_Camera_Enum_ECameraType_RTSP} ${this.$i18n.Form_Value_Required}`;
+            this.inputErrorMessage.name = `${this.$i18n.Source_Camera_Name} ${this.$i18n.Form_Value_Required}`;
         }
     }
     //#endregion
@@ -729,10 +503,7 @@ export default class VuePageClass extends Vue {
 
     //#region Other Function
     private validateForm(): void {
-        this.handelNameChange();
-        this.handelRtspChange();
-        this.handleModalChange();
-        this.handleDeviceChange();
+        this.inputName();
     }
 
     private handleDeleteAsking(): void {
@@ -741,11 +512,7 @@ export default class VuePageClass extends Vue {
         this.dialogData.type = 'warning';
         this.dialogData.showCancelButton = true;
 
-        if (this.selectedItems.length > 1) {
-            this.dialogData.message = this.$i18n.Source_Camera_DialogDelete_Message_items;
-        } else {
-            this.dialogData.message = this.$i18n.Source_Camera_DialogDelete_Message_item;
-        }
+        this.dialogData.message = this.$i18n.Source_Camera_DialogDelete_Message_item;
     }
 
     private formDataClear(): void {
@@ -761,17 +528,13 @@ export default class VuePageClass extends Vue {
 
         for (const index in responseSortData.statusCodes) {
             let statusCode: number = responseSortData.statusCodes[index] !== undefined ? responseSortData.statusCodes[index] : undefined;
-
             let message: string = responseSortData.messages[index];
-
             let detail: string = responseSortData.details[index];
 
             if (statusCode === 200) continue;
 
             this.dialogData.isShow = true;
-
             this.dialogData.message = message;
-
             this.dialogData.showCancelButton = false;
 
             if (this.dialogData.detail.includes(detail)) {

@@ -23,11 +23,8 @@ export namespace ModelsLocation {
 
     export interface IFormData {
         name: string;
-        type: DropdownModel.IOption;
-        modal: DropdownModel.IOption;
-        rtsp: string;
-        device: DropdownModel.IOption;
-        remark: string;
+        email: string;
+        password: string;
         note: string;
     }
 
@@ -45,15 +42,15 @@ export namespace ModelsLocation {
     }
 
     export interface IInputErrorMessage {
-        nameInputErrorMessage: string;
-        rtspInputErrorMessage: string;
+        name: string;
+        email: string;
+        password: string;
     }
 
     export interface ISaveButtonDisable {
         name: boolean;
-        rtsp: boolean;
-        modal: boolean;
-        device: boolean;
+        email: boolean;
+        password: boolean;
     }
     //#endregion
 }
