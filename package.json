@@ -3,7 +3,7 @@
   "description": "WPC iEvent",
   "version": "1.0.0",
   "srcversion": "1.00.00",
-  "frameworkversion": "3.2.2.2",
+  "frameworkversion": "3.2.3.0",
   "private": true,
   "scripts": {},
   "dependencies": {
