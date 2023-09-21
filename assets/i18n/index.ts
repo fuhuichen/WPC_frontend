@@ -46,6 +46,33 @@ export const I18n = {
         'en-US': 'Action',
         'zh-TW': '動作',
     },
+    Common_ErrorFormat_Password: {
+        'en-US': 'Password format error, please check again',
+        'zh-TW': '密碼格式錯誤，請再次檢查',
+    },
+    Common_ErrorFormat_ConfirmPassword: {
+        'en-US': 'Password and confirm password do not match',
+        'zh-TW': '密碼和確認密碼不匹配',
+    },
+    Common_PasswordPrevious: {
+        'en-US': 'Previous Password',
+        'zh-TW': '原始密碼',
+    },
+    Common_Password: {
+        'en-US': 'Password',
+        'zh-TW': '密碼',
+    },
+    Common_PasswordConfirm: {
+        'en-US': 'Confirm Password',
+        'zh-TW': '確認密碼',
+    },
+    //#endregion
+
+    //#region Form
+    Form_ValueRequire: {
+        'en-US': 'is Required Field',
+        'zh-TW': '為必填欄位',
+    },
     //#endregion
 
     //#region Button
@@ -103,6 +130,10 @@ export const I18n = {
     Dialog_Error_Detail: {
         'en-US': 'Detail',
         'zh-TW': '細節',
+    },
+    Dialog_DeleteMessage_items: {
+        'en-US': 'Are you sure to delete these items?',
+        'zh-TW': '你確定要刪除所選項目嗎？',
     },
     //#endregion
 
@@ -220,6 +251,10 @@ export const I18n = {
         'en-US': 'List',
         'zh-TW': '清單',
     },
+    'Router_/w-change-password': {
+        'en-US': 'Change Password',
+        'zh-TW': '更改密碼',
+    },
     //#endregion
 
     //#region View Login
@@ -253,6 +288,64 @@ export const I18n = {
     },
     //#endregion
 
+    //#region Password
+    Password_PasswordRule: {
+        'en-US': 'Password rules: ',
+        'zh-TW': '密碼規則：',
+    },
+    Password_AtLeast8Characters: {
+        'en-US': 'At least 8 characters',
+        'zh-TW': '至少8 個字符',
+    },
+    Password_AtLeastCapital: {
+        'en-US': 'At least 1 capital english alphabet',
+        'zh-TW': '至少1 個大寫英文字母',
+    },
+    Password_AtLeastLowercase: {
+        'en-US': 'At least 1 lowercase english alphabet',
+        'zh-TW': '至少1 個小寫英文字母',
+    },
+    Password_AtLeastNumber: {
+        'en-US': 'At least 1 number',
+        'zh-TW': '至少1 個數字',
+    },
+    Password_AtLeastSpecial: {
+        'en-US': 'Recommended to use at least 1 special symbol',
+        'zh-TW': '建議至少使用1 個特殊符號',
+    },
+    Password_ChangePassword: {
+        'en-US': 'Change Password',
+        'zh-TW': '更改密碼',
+    },
+    User_ChangePassword: {
+        'en-US': 'Change Password',
+        'zh-TW': '更改密碼',
+    },
+    //#endregion
+
+    //#region Multiselect
+    Multiselect_ListIsEmpty: {
+        'en-US': 'Option list is Empty',
+        'zh-TW': '選項清單為空',
+    },
+    Multiselect_NoResult: {
+        'en-US': 'No data found. Consider changing the search query',
+        'zh-TW': '找不到資料，請更改搜尋條件後再次查詢',
+    },
+    Multiselect_MaxElements: {
+        'en-US': 'Maximum options selected. First remove a selected option to select another',
+        'zh-TW': '已達選擇數量上限，請先移除選定項目後再選擇新項目',
+    },
+    Multiselect_SelectAll: {
+        'en-US': 'Select All',
+        'zh-TW': '全選',
+    },
+    Multiselect_SearchPlaceholder: {
+        'en-US': 'Search',
+        'zh-TW': '搜尋',
+    },
+    //#endregion
+
     //#region User
     User_Language: {
         'en-US': 'Language',
@@ -261,152 +354,6 @@ export const I18n = {
     User_Logout: {
         'en-US': 'Logout',
         'zh-TW': '登出',
-    },
-    //#endregion
-
-    //#region Detect List
-    Detect_StartDate: {
-        'en-US': 'Start Date',
-        'zh-TW': '開始日期',
-    },
-    Detect_EndDate: {
-        'en-US': 'End Date',
-        'zh-TW': '結束日期',
-    },
-    Detect_StartTime: {
-        'en-US': 'Start Time',
-        'zh-TW': '開始時間',
-    },
-    Detect_Endtime: {
-        'en-US': 'End Time',
-        'zh-TW': '結束時間',
-    },
-    Detect_Date_Time: {
-        'en-US': 'Date Time',
-        'zh-TW': '日期時間',
-    },
-    Detect_Picture: {
-        'en-US': 'Picture',
-        'zh-TW': '照片',
-    },
-    Detect_Object_Name: {
-        'en-US': 'Object Name',
-        'zh-TW': '物件名稱',
-    },
-    Detect_Snapshot: {
-        'en-US': 'Snapshot',
-        'zh-TW': '快照',
-    },
-    Detect_Source: {
-        'en-US': 'Video Source',
-        'zh-TW': '影像來源',
-    },
-    Detect_Source_Type: {
-        'en-US': 'Type',
-        'zh-TW': '類型',
-    },
-    Detect_Source_Name: {
-        'en-US': 'Source Name',
-        'zh-TW': '來源名稱',
-    },
-    Detect_KeywordPlaceholder: {
-        'en-US': 'Search for object name or video source name',
-        'zh-TW': '搜尋物件名稱或影像來源名稱',
-    },
-    Detect_DateFilter_ErrorMessage_StartDateGreaterEndDate: {
-        'en-US': 'End date should be greater than or equal to start date',
-        'zh-TW': '結束日期必須大於或等於開始日期',
-    },
-    //#endregion
-
-    //#region Source Camera
-    Source_Camera_Button_Delete: {
-        'en-US': 'Delete',
-        'zh-TW': '刪除',
-    },
-    Source_Camera_Button_Create: {
-        'en-US': 'Create',
-        'zh-TW': '新增',
-    },
-    Source_Camera_Action: {
-        'en-US': 'Action',
-        'zh-TW': '動作',
-    },
-    Source_Camera_Device: {
-        'en-US': 'Device',
-        'zh-TW': '設備',
-    },
-    Source_Camera_Note: {
-        'en-US': 'Note',
-        'zh-TW': '備註',
-    },
-    Source_Camera_Inference_Modal: {
-        'en-US': 'Inference Modal',
-        'zh-TW': '辨識模型',
-    },
-    Source_Camera_Name: {
-        'en-US': 'Name',
-        'zh-TW': '名稱',
-    },
-    Source_Camera_Type: {
-        'en-US': 'Type',
-        'zh-TW': '類型',
-    },
-    Source_Camera_Remark: {
-        'en-US': 'Remark',
-        'zh-TW': '註解',
-    },
-    Source_Camera_Create: {
-        'en-US': 'Create Camera',
-        'zh-TW': '建立相機',
-    },
-    Source_Camera_Edit: {
-        'en-US': 'Edit Camera',
-        'zh-TW': '編輯相機',
-    },
-    Source_Camera_RTSP_Placeholder: {
-        'en-US': 'e.g. rtsp://username.password@192.168.0.100/rtsp_url',
-        'zh-TW': '範例：rtsp://username.password@192.168.0.100/rtsp_url',
-    },
-    Source_Camera_RTSP_Regex_Error: {
-        'en-US': 'RTSP format error',
-        'zh-TW': 'RTSP 格式錯誤',
-    },
-    Source_Camera_Dropdown_SelectAll: {
-        'en-US': 'All',
-        'zh-TW': '全部',
-    },
-    Source_Camera_Dropdown_MaxElements: {
-        'en-US': 'Options be selected, please remove selected item before select a new item',
-        'zh-TW': '已選擇選項，選擇新項目之前請移除所選選項',
-    },
-    Source_Camera_Dropdown_NoResult: {
-        'en-US': "Can't find select item , please search again",
-        'zh-TW': '無資料，請再搜尋一次',
-    },
-    Source_Camera_Dropdown_NoOptions: {
-        'en-US': 'Option lists is empty',
-        'zh-TW': '無選項',
-    },
-    Source_Camera_DropdownPlaceholder: {
-        'en-US': 'Please select options',
-        'zh-TW': '請選擇選項',
-    },
-    Source_Camera_Dropdown_SearchPlaceholder: {
-        'en-US': 'Search',
-        'zh-TW': '搜尋',
-    },
-    Source_Camera_DialogDelete_Title: {
-        'en-US': 'Inquire',
-        'zh-TW': '詢問',
-    },
-    Source_Camera_DialogDelete_Message_item: {
-        'en-US': 'Are you sure to delete this item?',
-        'zh-TW': '你確定要刪除所選項目嗎？',
-    },
-    Source_Camera_DialogDelete_Message_items: {
-        'en-US': 'Are you sure to delete these items?',
-        'zh-TW': '你確定要刪除所選項目嗎？',
     },
     //#endregion
 
@@ -542,17 +489,6 @@ export const I18n = {
     Role_Enum_EUserRole_Administrator: {
         'en-US': 'Super User',
         'zh-TW': '超級使用者',
-    },
-    //#endregion
-
-    //#region Source Camera Enum ECameraType
-    Source_Camera_Enum_ECameraType_RTSP: {
-        'en-US': 'RTSP',
-        'zh-TW': 'RTSP',
-    },
-    Source_Camera_Enum_ECameraType_Webcam: {
-        'en-US': 'Webcam',
-        'zh-TW': 'Webcam',
     },
     //#endregion
 };

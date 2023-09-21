@@ -211,10 +211,10 @@ export default class VuePageClass extends Vue {
     };
 
     private pagingI18n: DropdownModel.IPagingI18n = {
-        selectAll: this.$i18n.Source_Camera_Dropdown_SelectAll,
-        maxElements: this.$i18n.Source_Camera_Dropdown_MaxElements,
-        noResult: this.$i18n.Source_Camera_Dropdown_NoResult,
-        noOptions: this.$i18n.Source_Camera_Dropdown_NoOptions,
+        selectAll: this.$i18n.Multiselect_SelectAll,
+        maxElements: this.$i18n.Multiselect_MaxElements,
+        noResult: this.$i18n.Multiselect_NoResult,
+        noOptions: this.$i18n.Multiselect_ListIsEmpty,
     };
 
     private dialogDataOriginal: IViews.IDialogData = {

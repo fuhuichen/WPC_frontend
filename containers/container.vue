@@ -329,6 +329,7 @@ export default class VuePageClass extends Vue {
 
         if (this.user.user.roles.some((n) => n.name === EUserRole.SystemAdministrator)) {
             this.navUserActions = [
+                this.$i18n.User_ChangePassword,
                 {
                     groupName: this.$i18n.User_Language,
                     actions: I18nNamespace.I18nOptions.map((n) => n.value),
@@ -376,6 +377,9 @@ export default class VuePageClass extends Vue {
     private async navUserActionClick(action: string | string[], index: number | number[], e: PointerEvent): Promise<void> {
         if (typeof action === 'string') {
             switch (action) {
+                case this.$i18n.User_ChangePassword:
+                    this.$router.push(WebPath.ChangePassword);
+                    break;
                 case this.$i18n.User_Logout:
                     UserService.user = undefined;
                     this.$router.push(WebPath.Login);

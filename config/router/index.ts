@@ -51,6 +51,12 @@ const MemberDownload = async () => {
 };
 //#endregion
 
+//#region Change Password
+const ChangePassword = async () => {
+    return (await import(/* webpackChunkName: "chunk_ChangePassword" */ '@/views/users')).ChangePassword;
+};
+//#endregion
+
 //#endregion import component
 
 let title: string = require('@/vue.config').pages.title;
@@ -142,6 +148,15 @@ routes = [
                 name: 'User List',
                 component: MemberManagement,
                 meta: { title: `${title}-User management` },
+            },
+            //#endregion
+
+            //#region ChangePassword
+            {
+                path: WebPath.ChangePassword,
+                name: 'Change Password',
+                component: ChangePassword,
+                meta: { title: `${title}-Change Password` },
             },
             //#endregion
         ],

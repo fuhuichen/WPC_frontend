@@ -3,7 +3,7 @@
         <div v-show="pageTable">
             <AicsLayoutPageTitle :text="$i18n['Router_/w-course-management']">
                 <div class="page--title-tool-buttons">
-                    <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Source_Camera_Button_Create" @click="pageToCreate" />
+                    <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Common_Create" @click="pageToCreate" />
                 </div>
             </AicsLayoutPageTitle>
 
@@ -247,10 +247,10 @@ export default class VuePageClass extends Vue {
     private formData: Model.IFormData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
 
     private pagingI18n: DropdownModel.IPagingI18n = {
-        selectAll: this.$i18n.Source_Camera_Dropdown_SelectAll,
-        maxElements: this.$i18n.Source_Camera_Dropdown_MaxElements,
-        noResult: this.$i18n.Source_Camera_Dropdown_NoResult,
-        noOptions: this.$i18n.Source_Camera_Dropdown_NoOptions,
+        selectAll: this.$i18n.Multiselect_SelectAll,
+        maxElements: this.$i18n.Multiselect_MaxElements,
+        noResult: this.$i18n.Multiselect_NoResult,
+        noOptions: this.$i18n.Multiselect_ListIsEmpty,
     };
 
     private inputErrorDataOriginal: Model.IInputError = {
@@ -415,16 +415,12 @@ export default class VuePageClass extends Vue {
     private inputName(): void {
         if (!!this.formData.name) {
             this.inputErrorData.nameInputError = false;
-
             this.saveButtonDisable.name = false;
-
             this.inputErrorMessage.name = '';
         } else {
             this.inputErrorData.nameInputError = true;
-
             this.saveButtonDisable.name = true;
-
-            this.inputErrorMessage.name = `${this.$i18n.Source_Camera_Name} ${this.$i18n.Form_Value_Required}`;
+            this.inputErrorMessage.name = `${this.$i18n.Download_Location_LocationName} ${this.$i18n.Form_Value_Required}`;
         }
     }
     //#endregion
@@ -508,11 +504,11 @@ export default class VuePageClass extends Vue {
 
     private handleDeleteAsking(): void {
         this.dialogData.isShow = true;
-        this.dialogData.title = this.$i18n.Source_Camera_DialogDelete_Title;
+        this.dialogData.title = this.$i18n.Dialog_Question;
         this.dialogData.type = 'warning';
         this.dialogData.showCancelButton = true;
 
-        this.dialogData.message = this.$i18n.Source_Camera_DialogDelete_Message_item;
+        this.dialogData.message = this.$i18n.Dialog_DeleteMessage_items;
     }
 
     private formDataClear(): void {

@@ -37,4 +37,8 @@ export const WebPath = {
     //#region Member Download
     MemberDownload: '/w-download/member',
     //#endregion
+
+    //#region Change Password
+    ChangePassword: '/w-change-password',
+    //#region Settings
 };
