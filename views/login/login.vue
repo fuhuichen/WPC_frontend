@@ -191,28 +191,28 @@ export default class VuePageClass extends Vue {
 
         this.loadingData.isShow = true;
 
-        // let apiResult = await ServerService.Login(payload);
-        // let responseData: ServerNamespace.IServerResultError = undefined;
-        // if (!!apiResult.error) {
-        //     responseData = apiResult.error;
-        //     this.handleServerResponse([responseData]);
+        let apiResult = await ServerService.Login(payload);
+        let responseData: ServerNamespace.IServerResultError = undefined;
+        if (!!apiResult.error) {
+            responseData = apiResult.error;
+            this.handleServerResponse([responseData]);
 
-        //     this.loadingData.isShow = false;
+            this.loadingData.isShow = false;
 
-        //     return null;
-        // }
+            return null;
+        }
 
         this.loadingData.isShow = false;
 
-        // let { role, token, username }: Model.IServerResponseData = apiResult.result;
+        let { userId, token, type }: Model.IServerResponseData = apiResult.result;
 
         UserService.user = {
-            sessionId: 'asdasd',
+            sessionId: token,
             user: {
-                objectId: undefined,
-                roles: [{ objectId: 'Administrator', name: 'SystemAdministrator' }],
-                username: 'Administrator',
-                name: 'Administrator',
+                objectId: userId,
+                roles: [{ objectId: userId, name: type }],
+                username: type,
+                name: type,
                 email: undefined,
             },
         };

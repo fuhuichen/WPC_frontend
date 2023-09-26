@@ -6,7 +6,7 @@ export const config: EnvNamespace.IRuntimeEnv[] = [
         serverBaseUrls: [
             {
                 key: 'default',
-                development: 'http://172.22.24.111:4010',
+                development: 'http://4.194.19.250',
             },
         ],
     },

@@ -486,9 +486,9 @@ export const I18n = {
         'en-US': 'System Administrator',
         'zh-TW': '最高系統管理員',
     },
-    Role_Enum_EUserRole_Administrator: {
-        'en-US': 'Super User',
-        'zh-TW': '超級使用者',
+    Role_Enum_EUserRole_admin: {
+        'en-US': 'Admin',
+        'zh-TW': 'Admin',
     },
     //#endregion
 };

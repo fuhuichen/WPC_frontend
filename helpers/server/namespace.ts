@@ -59,9 +59,8 @@ export interface IWebLoginRequest {
  */
 export interface IWebLoginResponse {
     token: string;
-    username: string;
-    password: string;
-    role: string;
+    type: string;
+    userId: string;
 }
 
 /**

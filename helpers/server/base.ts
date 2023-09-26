@@ -139,27 +139,52 @@ export class ServerBase {
     public async Login(data: ServerNameSpace.IWebLoginRequest): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IWebLoginResponse>> {
         try {
             let body: object = {
-                grant_type: 'password',
-                username: data.username,
+                email: data.username,
                 password: data.password,
             };
 
-            let response = await this.BasePost('api/v1/user/login', body, 'json');
+            let response = await this.BasePost('api/auth/login', body, 'json');
             if (!!response.error) {
                 return response;
             }
 
             let result: ServerNameSpace.IWebLoginResponse = {
-                token: `${response.result['token_type']} ${response.result['access_token']}`,
-                username: data.username,
-                password: data.password,
-                role: 'SystemAdministrator',
+                token: response.result.token,
+                type: response.result.type,
+                userId: response.result.userId,
             };
 
-            this._authorization = result.token;
+            this._authorization = response.result.token;
 
             return {
                 result: result,
+            };
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Logout
+     * @async
+     * @login
+     * @returns IServerResult<boolean>
+     */
+    public async Logout(): Promise<ServerNameSpace.IServerResult<boolean>> {
+        try {
+            let body: object = {
+                token: this._authorization,
+            };
+
+            let response = await this.BasePost('api/auth/logout', body, 'json');
+            if (!!response.error) {
+                return response;
+            }
+
+            this._authorization = undefined;
+
+            return {
+                result: true,
             };
         } catch (e) {
             throw e;

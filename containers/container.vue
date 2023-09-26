@@ -268,7 +268,7 @@ export default class VuePageClass extends Vue {
         if (!navLists) {
             isDeepZero = false;
 
-            if (this.user.user.roles.some((n) => n.name === EUserRole.SystemAdministrator)) {
+            if (this.user.user.roles.some((n) => n.name === EUserRole.Administrator)) {
                 navLists = JSON.parse(JSON.stringify(NavSystemAdministratorListOriginal));
             } else {
                 console.error('user role not allow');
@@ -327,7 +327,7 @@ export default class VuePageClass extends Vue {
 
         this.navUserName = this.user.user.name;
 
-        if (this.user.user.roles.some((n) => n.name === EUserRole.SystemAdministrator)) {
+        if (this.user.user.roles.some((n) => n.name === EUserRole.Administrator)) {
             this.navUserActions = [
                 this.$i18n.User_ChangePassword,
                 {
@@ -381,7 +381,17 @@ export default class VuePageClass extends Vue {
                     this.$router.push(WebPath.ChangePassword);
                     break;
                 case this.$i18n.User_Logout:
-                    UserService.user = undefined;
+                    let apiResult = await ServerService.Logout();
+                    let responseData: ServerNamespace.IServerResultError = undefined;
+                    if (!!apiResult.error) {
+                        responseData = apiResult.error;
+                        this.handleServerResponse([responseData]);
+
+                        this.loadingData.isShow = false;
+
+                        return null;
+                    }
+
                     this.$router.push(WebPath.Login);
                     break;
             }
