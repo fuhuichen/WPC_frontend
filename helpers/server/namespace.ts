@@ -182,22 +182,9 @@ export enum ISourceCameraType {
 /**
  * Interface for Source Camera R Response
  */
-export type ISourceCameraRResponse =
-    | {
-          objectId: string;
-          name: string;
-          type: ISourceCameraType.RTSP;
-          modal: string;
-          rtsp: string;
-          remark: string;
-          note: string;
-      }
-    | {
-          objectId: string;
-          name: string;
-          type: ISourceCameraType.Webcam;
-          modal: string;
-          device: string;
-          remark: string;
-          note: string;
-      };
+export interface IUserListRResponse {
+    email: string;
+    name: string;
+    type: string;
+    userId: string;
+}

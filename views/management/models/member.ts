@@ -3,20 +3,15 @@ import { ServerNamespace } from '@/helpers';
 
 export namespace ModelsMember {
     //#region server
-    export type IServerResponseData = ServerNamespace.ISourceCameraRResponse;
+    export type IServerResponseData = ServerNamespace.IUserListRResponse;
     //#endregion
 
     //#region web
     export interface ITableData {
-        objectId: string;
+        email: string;
         name: string;
         type: string;
-        modal: string;
-        rtsp?: string;
-        device?: string;
-        remark: string;
-        isChecked: string;
-        note: string;
+        userId: string;
     }
 
     export interface ITableApiParam extends ServerNamespace.IDataList {}

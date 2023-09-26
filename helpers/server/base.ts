@@ -22,7 +22,7 @@ export class ServerBase {
     /**
      * Authorization
      */
-    private _authorization: string = '';
+    public _authorization: string = '';
 
     /**
      * Get Authorization
@@ -323,72 +323,49 @@ export class ServerBase {
     }
 
     /**
-     * Get Source Camera List
-     * @async
-     * @returns IServerResult<IPagingResponse<ISourceCameraRResponse>>
+     * Get Source User List
      */
-    public async SourceCameraReads(): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.ISourceCameraRResponse>>>;
-    public async SourceCameraReads(
+    public async UserList(): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>>;
+    public async UserList(
         datas: ServerNameSpace.IDataList,
-    ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.ISourceCameraRResponse>>>;
-    public async SourceCameraReads(
+    ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>>;
+    public async UserList(
         datas?: ServerNameSpace.IDataList,
-    ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.ISourceCameraRResponse>>> {
+    ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>> {
         try {
-            let fakeData: ServerNameSpace.ISourceCameraRResponse[] = [];
+            let body: object = {
+                token: this._authorization,
+            };
 
-            let name: string[] = ['E棟1樓-咖啡廳正面', 'E棟5樓-機櫃', 'E棟1樓-咖啡廳左', 'E棟2樓-機櫃', 'E棟4樓-webcam'];
+            let result: ServerNameSpace.IUserListRResponse[] = [];
 
-            let type: ServerNameSpace.ISourceCameraType[] = [ServerNameSpace.ISourceCameraType.RTSP, ServerNameSpace.ISourceCameraType.Webcam];
+            let res = await this.BasePost('api/user/list', body, 'json');
 
-            let modal: string[] = ['Yolo V4', 'Another'];
-
-            for (let i = 0; i < name.length; i++) {
-                let randomIndex = Math.floor(Math.random() * 2);
-                let cameraType: ServerNameSpace.ISourceCameraType = type[randomIndex];
-
-                if (cameraType === ServerNameSpace.ISourceCameraType.RTSP) {
-                    fakeData.push({
-                        objectId: `objectId_${i + 1}`,
-                        name: name[i],
-                        type: cameraType,
-                        modal: modal[randomIndex],
-                        rtsp: 'rtsp://username.password@192.168.0.100/rtsp_url',
-                        remark: 'fake data',
-                        note: 'fake note',
-                    });
-                } else if (cameraType === ServerNameSpace.ISourceCameraType.Webcam) {
-                    fakeData.push({
-                        objectId: `objectId_${i + 1}`,
-                        name: name[i],
-                        type: cameraType,
-                        modal: modal[randomIndex],
-                        device: 'device 1',
-                        remark: 'fake data',
-                        note: 'fake note',
-                    });
-                }
+            if (res.result.errorcode === 4) {
+                return res;
             }
+
+            result = res.result.rows;
 
             // pagination
             let pageSize: number = datas.paging?.pageSize;
-            let total: number = fakeData.length;
+            let total: number = result.length;
             let totalPages: number = Math.ceil(total / pageSize);
             let page: number = datas.paging.page;
             if (page > totalPages) {
                 page = totalPages || 1;
             }
 
-            fakeData = fakeData.slice((page - 1) * pageSize, page * pageSize);
+            result = result.slice((page - 1) * pageSize, page * pageSize);
 
-            let response: ServerNameSpace.IPagingResponse<ServerNameSpace.ISourceCameraRResponse> = {
+            let response: ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse> = {
                 paging: {
                     total: total,
                     totalPages: totalPages,
                     page: page,
                     pageSize: pageSize,
                 },
-                results: fakeData,
+                results: result,
             };
 
             return {

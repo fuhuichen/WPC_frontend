@@ -18,6 +18,7 @@ import { Server } from '@/helpers/server';
 import * as ServerNamespace from '@/helpers/server/namespace';
 export { Server, ServerNamespace };
 export const ServerService = new Server(Environment.BaseUrl.default);
+ServerService._authorization = !UserService.user ? undefined : UserService.user.sessionId;
 ServerService.Initialization();
 
 export * as ResolveTextService from './utilities/resolve-text';

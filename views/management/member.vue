@@ -361,8 +361,8 @@ export default class VuePageClass extends Vue {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
             { type: 'field', title: this.$i18n.Management_Member_Name, key: 'name' },
-            { type: 'field', title: this.$i18n.Management_Member_Email, key: 'type' },
-            { type: 'field', title: this.$i18n.Management_Member_Note, key: 'modal' },
+            { type: 'field', title: this.$i18n.Management_Member_Email, key: 'email' },
+            { type: 'field', title: this.$i18n.Management_Member_Note, key: 'note' },
             { type: 'field', title: this.$i18n.Common_Action, key: 'action', useSlot: true },
         ];
     }
@@ -572,7 +572,8 @@ export default class VuePageClass extends Vue {
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        let apiResult = await ServerService.SourceCameraReads(this.tableApiParam);
+        let apiResult = await ServerService.UserList(this.tableApiParam);
+
         let responseData: ServerNamespace.IServerResultError = undefined;
         if (!!apiResult.error) {
             responseData = apiResult.error;
@@ -595,32 +596,7 @@ export default class VuePageClass extends Vue {
     }
 
     private tableSetData(result: Model.IServerResponseData[]): void {
-        let tableData: Model.ITableData[] = [];
-        (result || []).forEach((element: Model.IServerResponseData) => {
-            if (element.type === ServerNamespace.ISourceCameraType.RTSP) {
-                tableData.push({
-                    objectId: element.objectId ?? '',
-                    name: element.name ?? '',
-                    type: element.type ?? '',
-                    modal: element.modal ?? '',
-                    rtsp: element.rtsp ?? '',
-                    remark: element.remark ?? '',
-                    isChecked: '',
-                    note: element.note ?? '',
-                });
-            } else if (element.type === ServerNamespace.ISourceCameraType.Webcam) {
-                tableData.push({
-                    objectId: element.objectId ?? '',
-                    name: element.name ?? '',
-                    type: element.type ?? '',
-                    modal: element.modal ?? '',
-                    device: element.device ?? '',
-                    remark: element.remark ?? '',
-                    isChecked: '',
-                    note: element.note ?? '',
-                });
-            }
-        });
+        let tableData: Model.ITableData[] = result;
 
         this.tableItem.data = tableData;
     }

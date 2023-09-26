@@ -3,7 +3,7 @@ import { ServerNamespace } from '@/helpers';
 
 export namespace ModelsLocation {
     //#region server
-    export type IServerResponseData = ServerNamespace.ISourceCameraRResponse;
+    export type IServerResponseData = ServerNamespace.IUserListRResponse;
     //#endregion
 
     //#region web
