@@ -341,7 +341,7 @@ export class ServerBase {
 
             let res = await this.BasePost('api/user/list', body, 'json');
 
-            if (res.result.errorcode === 4) {
+            if (res.result.errorcode !== 0) {
                 return res;
             }
 
@@ -429,6 +429,113 @@ export class ServerBase {
             };
 
             let res = await this.BasePost('api/user/delete', body, 'json');
+
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Get Location List
+     */
+    public async GetLocationList(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+            };
+
+            let res = await this.BasePost('api/site/list', body, 'json');
+
+            if (res.result.errorcode !== 0) {
+                return res;
+            }
+
+            let result = res.result.rows;
+
+            // pagination
+            let pageSize: number = datas.paging?.pageSize;
+            let total: number = result.length;
+            let totalPages: number = Math.ceil(total / pageSize);
+            let page: number = datas.paging.page;
+            if (page > totalPages) {
+                page = totalPages || 1;
+            }
+
+            result = result.slice((page - 1) * pageSize, page * pageSize);
+
+            let response = {
+                paging: {
+                    total: total,
+                    totalPages: totalPages,
+                    page: page,
+                    pageSize: pageSize,
+                },
+                results: { rows: result, locationList: res.result.locationList, typeList: res.result.typeList },
+            };
+
+            return {
+                result: response,
+            };
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Get Update User List
+     */
+    public async UpdateLocation(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                siteId: datas.siteId,
+                name: datas.name,
+                locationName: datas.locationName,
+                type: datas.type,
+                point: datas.point,
+            };
+
+            let res = await this.BasePost('api/site/update', body, 'json');
+
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Get Create User List
+     */
+    public async CreateLocation(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                name: datas.name,
+                locationName: datas.locationName,
+                type: datas.type,
+                point: datas.point,
+            };
+
+            let res = await this.BasePost('api/site/create', body, 'json');
+
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Get Delete User List
+     */
+    public async DeleteLocation(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                siteId: datas.siteId,
+            };
+
+            let res = await this.BasePost('api/site/delete', body, 'json');
 
             return res;
         } catch (e) {

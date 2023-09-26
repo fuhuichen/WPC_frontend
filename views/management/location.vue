@@ -47,8 +47,8 @@
                     <AicsInputText
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
-                        name="name"
+                        v-model.trim="formData.locationName"
+                        name="locationName"
                         :debounce="50"
                         :placeholder="$i18n.Download_Location_LocationName"
                         :isWidth100Percent="true"
@@ -64,8 +64,8 @@
                     <AicsInputText
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
-                        name="email"
+                        v-model.trim="formData.type"
+                        name="type"
                         :debounce="50"
                         :placeholder="$i18n.Download_Location_Type"
                         :isWidth100Percent="true"
@@ -93,19 +93,19 @@
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Management_Member_Note" />
+                    <AicsTextLabel :text="$i18n.Management_Member_Point" />
 
-                    <AicsInputTextarea
+                    <AicsInputNumber
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
-                        name="note"
+                        v-model.trim="formData.point"
+                        name="name"
                         :debounce="50"
-                        :placeholder="$i18n.Management_Member_Note"
+                        :placeholder="$i18n.Download_Location_SiteName"
                         :isWidth100Percent="true"
                         :isError="inputErrorData.nameInputError"
                         :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
+                        @input="inputPoint"
                     />
                 </div>
             </template>
@@ -183,6 +183,7 @@ import {
     AicsDropdown,
     AicsInputTextarea,
     AicsModal,
+    AicsInputNumber,
 } from '@/../components';
 //#endregion
 
@@ -204,6 +205,7 @@ import {
         AicsDropdown,
         AicsInputTextarea,
         AicsModal,
+        AicsInputNumber,
     },
 })
 export default class VuePageClass extends Vue {
@@ -238,10 +240,11 @@ export default class VuePageClass extends Vue {
     };
 
     private formDataOriginal: Model.IFormData = {
+        siteId: '',
         name: '',
-        email: '',
-        password: '',
-        note: '',
+        locationName: '',
+        type: '',
+        point: null,
     };
 
     private formData: Model.IFormData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
@@ -303,6 +306,7 @@ export default class VuePageClass extends Vue {
 
     private showModal: boolean = false;
     private modalTitle: string = this.$i18n.Common_Edit;
+    private isEditUser: boolean = false;
 
     private stop$: Rx.Subject<boolean> = new Rx.Subject();
     //#endregion
@@ -360,9 +364,9 @@ export default class VuePageClass extends Vue {
     private initTableColumns(): void {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Location_LocationName, key: 'name' },
+            { type: 'field', title: this.$i18n.Download_Location_LocationName, key: 'locationName' },
             { type: 'field', title: this.$i18n.Download_Location_Type, key: 'type' },
-            { type: 'field', title: this.$i18n.Download_Location_SiteName, key: 'modal' },
+            { type: 'field', title: this.$i18n.Download_Location_SiteName, key: 'name' },
             { type: 'field', title: this.$i18n.Common_Action, key: 'action', useSlot: true },
         ];
     }
@@ -394,11 +398,21 @@ export default class VuePageClass extends Vue {
 
     private async pageToCreate(): Promise<void> {
         this.modalTitle = this.$i18n.Common_Create;
+        this.isEditUser = false;
+        this.formData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
+
         this.showModal = true;
     }
 
     private async pageToEdit(value: Model.ITableData): Promise<void> {
         this.modalTitle = this.$i18n.Common_Edit;
+        this.isEditUser = true;
+        this.formData.siteId = value.siteId;
+        this.formData.locationName = value.locationName;
+        this.formData.name = value.name;
+        this.formData.point = value.point;
+        this.formData.type = value.type;
+
         this.showModal = true;
     }
 
@@ -406,47 +420,70 @@ export default class VuePageClass extends Vue {
         this.showModal = false;
     }
 
-    private confirmModal() {
+    private async confirmModal() {
+        let res;
+
+        if (this.isEditUser) {
+            let payload = {
+                siteId: this.formData.siteId,
+                name: this.formData.name,
+                locationName: this.formData.locationName,
+                type: this.formData.type,
+                point: this.formData.point,
+            };
+
+            res = await ServerService.UpdateLocation(payload);
+        } else {
+            let payload = {
+                name: this.formData.name,
+                locationName: this.formData.locationName,
+                type: this.formData.type,
+                point: this.formData.point,
+            };
+
+            res = await ServerService.CreateLocation(payload);
+        }
+
         this.showModal = false;
+
+        if (res.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = res.result.error_msg;
+            this.dialogData.showCancelButton = false;
+
+            return false;
+        }
+
+        this.pageToList();
     }
     //#endregion
 
     //#region Event input
     private inputName(): void {
-        if (!!this.formData.name) {
-            this.inputErrorData.nameInputError = false;
-            this.saveButtonDisable.name = false;
-            this.inputErrorMessage.name = '';
-        } else {
-            this.inputErrorData.nameInputError = true;
-            this.saveButtonDisable.name = true;
-            this.inputErrorMessage.name = `${this.$i18n.Download_Location_LocationName} ${this.$i18n.Form_Value_Required}`;
-        }
+        // if (!!this.formData.name) {
+        //     this.inputErrorData.nameInputError = false;
+        //     this.saveButtonDisable.name = false;
+        //     this.inputErrorMessage.name = '';
+        // } else {
+        //     this.inputErrorData.nameInputError = true;
+        //     this.saveButtonDisable.name = true;
+        //     this.inputErrorMessage.name = `${this.$i18n.Download_Location_LocationName} ${this.$i18n.Form_Value_Required}`;
+        // }
+    }
+
+    private inputPoint(data) {
+        this.formData.point = parseInt(data);
     }
     //#endregion
 
     //#region Event button
-    private handleDelete(): void {
-        this.handleDeleteAsking();
-    }
-
-    private handleCancel(): void {
-        this.formDataClear();
-
-        this.pageToList();
-    }
-
-    private async handleSave(): Promise<void> {
-        this.pageToList();
-    }
-
     //#region Event table button
     private async actionEdit(value: Model.ITableData): Promise<void> {
         this.pageToEdit(value);
     }
 
     private async actionDelete(value: Model.ITableData): Promise<void> {
-        this.handleDeleteAsking();
+        this.handleDeleteAsking(value);
     }
     //#endregion
     //#endregion
@@ -485,9 +522,25 @@ export default class VuePageClass extends Vue {
         this.closeDialog();
     }
 
-    private async confirmDialog(): Promise<void> {
+    private async confirmDialog() {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = true;
+
+        let payload = {
+            siteId: this.formData.siteId,
+        };
+
+        let res = await ServerService.DeleteLocation(payload);
+
+        if (res.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = res.result.message;
+            this.dialogData.showCancelButton = false;
+
+            return false;
+        }
+
+        this.pageToList();
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }
@@ -502,11 +555,13 @@ export default class VuePageClass extends Vue {
         this.inputName();
     }
 
-    private handleDeleteAsking(): void {
+    private handleDeleteAsking(value): void {
         this.dialogData.isShow = true;
         this.dialogData.title = this.$i18n.Dialog_Question;
         this.dialogData.type = 'warning';
         this.dialogData.showCancelButton = true;
+
+        this.formData.siteId = value.siteId;
 
         this.dialogData.message = this.$i18n.Dialog_DeleteMessage_items;
     }
@@ -568,8 +623,10 @@ export default class VuePageClass extends Vue {
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        let apiResult = await ServerService.GetUserList(this.tableApiParam);
+        let apiResult = await ServerService.GetLocationList(this.tableApiParam);
+
         let responseData: ServerNamespace.IServerResultError = undefined;
+
         if (!!apiResult.error) {
             responseData = apiResult.error;
             this.handleServerResponse([responseData]);
@@ -580,9 +637,17 @@ export default class VuePageClass extends Vue {
             return false;
         }
 
+        if (!!apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = apiResult.result.error_msg;
+            this.dialogData.showCancelButton = false;
+
+            return false;
+        }
+
         this.tableItem.paging = apiResult.result.paging;
 
-        this.tableSetData(apiResult.result.results);
+        this.tableSetData(apiResult.result.results.rows);
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);
@@ -591,33 +656,7 @@ export default class VuePageClass extends Vue {
     }
 
     private tableSetData(result: Model.IServerResponseData[]): void {
-        // let tableData: Model.ITableData[] = [];
-        // (result || []).forEach((element: Model.IServerResponseData) => {
-        //     if (element.type === ServerNamespace.ISourceCameraType.RTSP) {
-        //         tableData.push({
-        //             objectId: element.objectId ?? '',
-        //             name: element.name ?? '',
-        //             type: element.type ?? '',
-        //             modal: element.modal ?? '',
-        //             rtsp: element.rtsp ?? '',
-        //             remark: element.remark ?? '',
-        //             isChecked: '',
-        //             note: element.note ?? '',
-        //         });
-        //     } else if (element.type === ServerNamespace.ISourceCameraType.Webcam) {
-        //         tableData.push({
-        //             objectId: element.objectId ?? '',
-        //             name: element.name ?? '',
-        //             type: element.type ?? '',
-        //             modal: element.modal ?? '',
-        //             device: element.device ?? '',
-        //             remark: element.remark ?? '',
-        //             isChecked: '',
-        //             note: element.note ?? '',
-        //         });
-        //     }
-        // });
-        // this.tableItem.data = tableData;
+        this.tableItem.data = result;
     }
     //#endregion
     //#endregion

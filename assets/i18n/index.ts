@@ -479,6 +479,10 @@ export const I18n = {
         'en-US': 'Note',
         'zh-TW': 'Note',
     },
+    Management_Member_Point: {
+        'en-US': 'Point',
+        'zh-TW': 'Point',
+    },
     //#endregion
 
     //#region Role Enum UserRole

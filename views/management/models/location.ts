@@ -3,29 +3,26 @@ import { ServerNamespace } from '@/helpers';
 
 export namespace ModelsLocation {
     //#region server
-    export type IServerResponseData = ServerNamespace.IUserListRResponse;
+    export type IServerResponseData = ServerNamespace.ILocationListRResponse;
     //#endregion
 
     //#region web
     export interface ITableData {
-        objectId: string;
         name: string;
+        locationName: string;
+        point: number;
+        siteId: string;
         type: string;
-        modal: string;
-        rtsp?: string;
-        device?: string;
-        remark: string;
-        isChecked: string;
-        note: string;
     }
 
     export interface ITableApiParam extends ServerNamespace.IDataList {}
 
     export interface IFormData {
+        siteId: string;
         name: string;
-        email: string;
-        password: string;
-        note: string;
+        locationName: string;
+        type: string;
+        point: number;
     }
 
     export interface IFilterOptions {

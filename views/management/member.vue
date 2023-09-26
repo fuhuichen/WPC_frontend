@@ -474,15 +474,6 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Event button
-    private handleCancel(): void {
-        this.formDataClear();
-
-        this.pageToList();
-    }
-
-    private async handleSave(): Promise<void> {
-        this.pageToList();
-    }
 
     //#region Event table button
     private async actionEdit(value: Model.ITableData): Promise<void> {

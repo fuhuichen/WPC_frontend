@@ -196,3 +196,11 @@ export interface IUserUpdateRResponse {
     errorcode: number;
     message?: string;
 }
+
+export interface ILocationListRResponse {
+    name: string;
+    siteId: string;
+    point: number;
+    type: string;
+    locationName: string;
+}
