@@ -64,8 +64,9 @@
                     <AicsInputText
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
+                        v-model.trim="formData.email"
                         name="email"
+                        :readonly="isEditUser"
                         :debounce="50"
                         :placeholder="$i18n.Management_Member_Email"
                         :isWidth100Percent="true"
@@ -76,13 +77,13 @@
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Management_Member_Password" :required="true" />
+                    <AicsTextLabel :text="$i18n.Management_Member_Password" />
 
                     <AicsInputText
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
-                        name="name"
+                        v-model.trim="formData.password"
+                        name="password"
                         :debounce="50"
                         :placeholder="$i18n.Management_Member_Password"
                         :isWidth100Percent="true"
@@ -98,7 +99,7 @@
                     <AicsInputTextarea
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
+                        v-model.trim="formData.note"
                         name="note"
                         :debounce="50"
                         :placeholder="$i18n.Management_Member_Note"
@@ -238,6 +239,7 @@ export default class VuePageClass extends Vue {
     };
 
     private formDataOriginal: Model.IFormData = {
+        userId: '',
         name: '',
         email: '',
         password: '',
@@ -303,6 +305,7 @@ export default class VuePageClass extends Vue {
 
     private showModal: boolean = false;
     private modalTitle: string = this.$i18n.Common_Edit;
+    private isEditUser: boolean = false;
 
     private stop$: Rx.Subject<boolean> = new Rx.Subject();
     //#endregion
@@ -394,11 +397,20 @@ export default class VuePageClass extends Vue {
 
     private async pageToCreate(): Promise<void> {
         this.modalTitle = this.$i18n.Common_Create;
+        this.isEditUser = false;
+        this.formData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
+
         this.showModal = true;
     }
 
     private async pageToEdit(value: Model.ITableData): Promise<void> {
         this.modalTitle = this.$i18n.Common_Edit;
+        this.isEditUser = true;
+        this.formData.userId = value.userId;
+        this.formData.name = value.name;
+        this.formData.email = value.email;
+        this.formData.note = value.note;
+
         this.showModal = true;
     }
 
@@ -406,8 +418,40 @@ export default class VuePageClass extends Vue {
         this.showModal = false;
     }
 
-    private confirmModal() {
+    private async confirmModal() {
+        let res;
+
+        if (this.isEditUser) {
+            let payload = {
+                userId: this.formData.userId,
+                password: this.formData.password,
+                name: this.formData.name,
+                note: this.formData.note,
+            };
+
+            res = await ServerService.UpdateUser(payload);
+        } else {
+            let payload = {
+                email: this.formData.email,
+                password: this.formData.password,
+                name: this.formData.name,
+                note: this.formData.note,
+            };
+
+            res = await ServerService.CreateUser(payload);
+        }
+
         this.showModal = false;
+
+        if (res.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = res.result.message;
+            this.dialogData.showCancelButton = false;
+
+            return false;
+        }
+
+        this.pageToList();
     }
     //#endregion
 
@@ -430,10 +474,6 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Event button
-    private handleDelete(): void {
-        this.handleDeleteAsking();
-    }
-
     private handleCancel(): void {
         this.formDataClear();
 
@@ -450,7 +490,7 @@ export default class VuePageClass extends Vue {
     }
 
     private async actionDelete(value: Model.ITableData): Promise<void> {
-        this.handleDeleteAsking();
+        this.handleDeleteAsking(value);
     }
     //#endregion
     //#endregion
@@ -489,9 +529,25 @@ export default class VuePageClass extends Vue {
         this.closeDialog();
     }
 
-    private async confirmDialog(): Promise<void> {
+    private async confirmDialog() {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = true;
+
+        let payload = {
+            userId: this.formData.userId,
+        };
+
+        let res = await ServerService.DeleteUser(payload);
+
+        if (res.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = res.result.message;
+            this.dialogData.showCancelButton = false;
+
+            return false;
+        }
+
+        this.pageToList();
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }
@@ -506,11 +562,13 @@ export default class VuePageClass extends Vue {
         this.inputName();
     }
 
-    private handleDeleteAsking(): void {
+    private handleDeleteAsking(value): void {
         this.dialogData.isShow = true;
         this.dialogData.title = this.$i18n.Dialog_Question;
         this.dialogData.type = 'warning';
         this.dialogData.showCancelButton = true;
+
+        this.formData.userId = value.userId;
 
         this.dialogData.message = this.$i18n.Dialog_DeleteMessage_items;
     }
@@ -572,15 +630,24 @@ export default class VuePageClass extends Vue {
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        let apiResult = await ServerService.UserList(this.tableApiParam);
+        let apiResult = await ServerService.GetUserList(this.tableApiParam);
 
         let responseData: ServerNamespace.IServerResultError = undefined;
+
         if (!!apiResult.error) {
             responseData = apiResult.error;
             this.handleServerResponse([responseData]);
 
             this.loadingData.isShow = false;
             this.$store.loading$.next(this.loadingData);
+
+            return false;
+        }
+
+        if (!!apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = apiResult.result.error_msg;
+            this.dialogData.showCancelButton = false;
 
             return false;
         }
@@ -596,9 +663,7 @@ export default class VuePageClass extends Vue {
     }
 
     private tableSetData(result: Model.IServerResponseData[]): void {
-        let tableData: Model.ITableData[] = result;
-
-        this.tableItem.data = tableData;
+        this.tableItem.data = result;
     }
     //#endregion
     //#endregion

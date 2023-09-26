@@ -325,11 +325,11 @@ export class ServerBase {
     /**
      * Get Source User List
      */
-    public async UserList(): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>>;
-    public async UserList(
+    public async GetUserList(): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>>;
+    public async GetUserList(
         datas: ServerNameSpace.IDataList,
     ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>>;
-    public async UserList(
+    public async GetUserList(
         datas?: ServerNameSpace.IDataList,
     ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>> {
         try {
@@ -371,6 +371,66 @@ export class ServerBase {
             return {
                 result: response,
             };
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Get Update User List
+     */
+    public async UpdateUser(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                userId: datas.userId,
+                password: datas.password,
+                name: datas.name,
+                note: datas.note,
+            };
+
+            let res = await this.BasePost('api/user/update', body, 'json');
+
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Get Create User List
+     */
+    public async CreateUser(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                email: datas.email,
+                password: datas.password,
+                name: datas.name,
+                note: datas.note,
+            };
+
+            let res = await this.BasePost('api/user/create', body, 'json');
+
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Get Delete User List
+     */
+    public async DeleteUser(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                userId: datas.userId,
+            };
+
+            let res = await this.BasePost('api/user/delete', body, 'json');
+
+            return res;
         } catch (e) {
             throw e;
         }

@@ -33,6 +33,8 @@ export interface IPagingResponse<T> {
         page: number;
         pageSize: number;
     };
+    errorcode?: number;
+    error_msg?: string;
     results: T[];
 }
 
@@ -187,4 +189,10 @@ export interface IUserListRResponse {
     name: string;
     type: string;
     userId: string;
+    note?: string;
+}
+
+export interface IUserUpdateRResponse {
+    errorcode: number;
+    message?: string;
 }

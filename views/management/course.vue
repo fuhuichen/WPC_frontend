@@ -572,7 +572,7 @@ export default class VuePageClass extends Vue {
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        let apiResult = await ServerService.UserList(this.tableApiParam);
+        let apiResult = await ServerService.GetUserList(this.tableApiParam);
         let responseData: ServerNamespace.IServerResultError = undefined;
         if (!!apiResult.error) {
             responseData = apiResult.error;

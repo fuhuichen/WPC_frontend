@@ -12,11 +12,13 @@ export namespace ModelsMember {
         name: string;
         type: string;
         userId: string;
+        note?: string;
     }
 
     export interface ITableApiParam extends ServerNamespace.IDataList {}
 
     export interface IFormData {
+        userId?: string;
         name: string;
         email: string;
         password: string;
