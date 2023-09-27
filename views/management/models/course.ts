@@ -3,29 +3,30 @@ import { ServerNamespace } from '@/helpers';
 
 export namespace ModelsCourse {
     //#region server
-    export type IServerResponseData = ServerNamespace.IUserListRResponse;
+    export type IServerResponseData = ServerNamespace.ICourseListRResponse;
     //#endregion
 
     //#region web
     export interface ITableData {
-        objectId: string;
+        courseId: string;
         name: string;
-        type: string;
-        modal: string;
-        rtsp?: string;
-        device?: string;
-        remark: string;
-        isChecked: string;
-        note: string;
+        date: string;
+        time: string;
+        bgName: string;
+        sectorName: string;
+        point: number;
     }
 
     export interface ITableApiParam extends ServerNamespace.IDataList {}
 
     export interface IFormData {
+        courseId: string;
         name: string;
-        email: string;
-        password: string;
-        note: string;
+        date: Date;
+        time: Date;
+        bgName: string;
+        sectorName: string;
+        point: number;
     }
 
     export interface IFilterOptions {
@@ -35,22 +36,30 @@ export namespace ModelsCourse {
     }
 
     export interface IInputError {
-        nameInputError: boolean;
-        rtspInputError: boolean;
-        modalDropdownError: boolean;
-        deviceDropdownError: boolean;
+        name: boolean;
+        date: boolean;
+        time: boolean;
+        bgName: boolean;
+        sectorName: boolean;
+        point: boolean;
     }
 
     export interface IInputErrorMessage {
         name: string;
-        email: string;
-        password: string;
+        date: string;
+        time: string;
+        bgName: string;
+        sectorName: string;
+        point: string;
     }
 
     export interface ISaveButtonDisable {
         name: boolean;
-        email: boolean;
-        password: boolean;
+        date: boolean;
+        time: boolean;
+        bgName: boolean;
+        sectorName: boolean;
+        point: boolean;
     }
     //#endregion
 }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-show="pageTable">
-            <AicsLayoutPageTitle :text="$i18n['Router_/w-course-management']">
+            <AicsLayoutPageTitle :text="$i18n['Router_/w-location-management']">
                 <div class="page--title-tool-buttons">
                     <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Common_Create" @click="pageToCreate" />
                 </div>
@@ -42,7 +42,7 @@
         <AicsModal customClass="modal-width-600" :isShow="showModal" :title="modalTitle" @close="closeModal">
             <template #body>
                 <div>
-                    <AicsTextLabel :text="$i18n.Download_Location_LocationName" :required="true" />
+                    <AicsTextLabel :text="$i18n.Download_Location_LocationName" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
@@ -52,14 +52,14 @@
                         :debounce="50"
                         :placeholder="$i18n.Download_Location_LocationName"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
+                        :isError="inputErrorData.locationName"
+                        :errorMessage="inputErrorMessage.locationName"
+                        @input="inputLocation"
                     />
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Download_Location_Type" :required="true" />
+                    <AicsTextLabel :text="$i18n.Download_Location_Type" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
@@ -69,14 +69,14 @@
                         :debounce="50"
                         :placeholder="$i18n.Download_Location_Type"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
+                        :isError="inputErrorData.type"
+                        :errorMessage="inputErrorMessage.type"
+                        @input="inputType"
                     />
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Download_Location_SiteName" :required="true" />
+                    <AicsTextLabel :text="$i18n.Download_Location_SiteName" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
@@ -86,14 +86,14 @@
                         :debounce="50"
                         :placeholder="$i18n.Download_Location_SiteName"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
+                        :isError="inputErrorData.name"
                         :errorMessage="inputErrorMessage.name"
                         @input="inputName"
                     />
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Management_Member_Point" />
+                    <AicsTextLabel :text="$i18n.Management_Member_Point" :required="!isEdit" />
 
                     <AicsInputNumber
                         size="14"
@@ -101,10 +101,10 @@
                         v-model.trim="formData.point"
                         name="name"
                         :debounce="50"
-                        :placeholder="$i18n.Download_Location_SiteName"
+                        :placeholder="$i18n.Management_Member_Point"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
+                        :isError="inputErrorData.point"
+                        :errorMessage="inputErrorMessage.point"
                         @input="inputPoint"
                     />
                 </div>
@@ -120,7 +120,7 @@
                         @click="closeModal"
                     />
 
-                    <AicsButton :text="$i18n.Button_Confirm" @click="confirmModal" />
+                    <AicsButton :text="$i18n.Button_Confirm" @click="confirmModal" :disabled="disableSaveButton" />
                 </div>
             </template>
         </AicsModal>
@@ -257,24 +257,26 @@ export default class VuePageClass extends Vue {
     };
 
     private inputErrorDataOriginal: Model.IInputError = {
-        nameInputError: false,
-        rtspInputError: false,
-        modalDropdownError: false,
-        deviceDropdownError: false,
+        name: false,
+        locationName: false,
+        type: false,
+        point: false,
     };
 
     private inputErrorData: Model.IInputError = { ...this.inputErrorDataOriginal };
 
     private inputErrorMessage: Model.IInputErrorMessage = {
         name: '',
-        email: '',
-        password: '',
+        locationName: '',
+        type: '',
+        point: '',
     };
 
     private saveButtonDisableOriginal: Model.ISaveButtonDisable = {
         name: true,
-        email: true,
-        password: true,
+        locationName: true,
+        type: true,
+        point: true,
     };
 
     private saveButtonDisable: Model.ISaveButtonDisable = { ...this.saveButtonDisableOriginal };
@@ -306,7 +308,7 @@ export default class VuePageClass extends Vue {
 
     private showModal: boolean = false;
     private modalTitle: string = this.$i18n.Common_Edit;
-    private isEditUser: boolean = false;
+    private isEdit: boolean = false;
 
     private stop$: Rx.Subject<boolean> = new Rx.Subject();
     //#endregion
@@ -326,6 +328,10 @@ export default class VuePageClass extends Vue {
         }
 
         return tempTableApiParam;
+    }
+
+    private get disableSaveButton(): boolean {
+        return Object.values(this.saveButtonDisable).some((x) => x === true);
     }
     //#endregion
 
@@ -398,7 +404,7 @@ export default class VuePageClass extends Vue {
 
     private async pageToCreate(): Promise<void> {
         this.modalTitle = this.$i18n.Common_Create;
-        this.isEditUser = false;
+        this.isEdit = false;
         this.formData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
 
         this.showModal = true;
@@ -406,12 +412,17 @@ export default class VuePageClass extends Vue {
 
     private async pageToEdit(value: Model.ITableData): Promise<void> {
         this.modalTitle = this.$i18n.Common_Edit;
-        this.isEditUser = true;
+        this.isEdit = true;
         this.formData.siteId = value.siteId;
         this.formData.locationName = value.locationName;
         this.formData.name = value.name;
         this.formData.point = value.point;
         this.formData.type = value.type;
+
+        this.saveButtonDisable.name = false;
+        this.saveButtonDisable.locationName = false;
+        this.saveButtonDisable.point = false;
+        this.saveButtonDisable.type = false;
 
         this.showModal = true;
     }
@@ -423,7 +434,7 @@ export default class VuePageClass extends Vue {
     private async confirmModal() {
         let res;
 
-        if (this.isEditUser) {
+        if (this.isEdit) {
             let payload = {
                 siteId: this.formData.siteId,
                 name: this.formData.name,
@@ -460,19 +471,61 @@ export default class VuePageClass extends Vue {
 
     //#region Event input
     private inputName(): void {
-        // if (!!this.formData.name) {
-        //     this.inputErrorData.nameInputError = false;
-        //     this.saveButtonDisable.name = false;
-        //     this.inputErrorMessage.name = '';
-        // } else {
-        //     this.inputErrorData.nameInputError = true;
-        //     this.saveButtonDisable.name = true;
-        //     this.inputErrorMessage.name = `${this.$i18n.Download_Location_LocationName} ${this.$i18n.Form_Value_Required}`;
-        // }
+        if (this.isEdit) return null;
+
+        if (!!this.formData.name) {
+            this.inputErrorData.name = false;
+            this.saveButtonDisable.name = false;
+            this.inputErrorMessage.name = '';
+        } else {
+            this.inputErrorData.name = true;
+            this.saveButtonDisable.name = true;
+            this.inputErrorMessage.name = `${this.$i18n.Download_Location_SiteName} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
+
+    private inputType(): void {
+        if (this.isEdit) return null;
+
+        if (!!this.formData.type) {
+            this.inputErrorData.type = false;
+            this.saveButtonDisable.type = false;
+            this.inputErrorMessage.type = '';
+        } else {
+            this.inputErrorData.type = true;
+            this.saveButtonDisable.type = true;
+            this.inputErrorMessage.type = `${this.$i18n.Download_Location_Type} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
+
+    private inputLocation(): void {
+        if (this.isEdit) return null;
+
+        if (!!this.formData.locationName) {
+            this.inputErrorData.locationName = false;
+            this.saveButtonDisable.locationName = false;
+            this.inputErrorMessage.locationName = '';
+        } else {
+            this.inputErrorData.locationName = true;
+            this.saveButtonDisable.locationName = true;
+            this.inputErrorMessage.locationName = `${this.$i18n.Download_Location_LocationName} ${this.$i18n.Form_Value_Required}`;
+        }
     }
 
     private inputPoint(data) {
         this.formData.point = parseInt(data);
+
+        if (this.isEdit) return null;
+
+        if (!!this.formData.point) {
+            this.inputErrorData.point = false;
+            this.saveButtonDisable.point = false;
+            this.inputErrorMessage.point = '';
+        } else {
+            this.inputErrorData.point = true;
+            this.saveButtonDisable.point = true;
+            this.inputErrorMessage.point = `${this.$i18n.Management_Member_Point} ${this.$i18n.Form_Value_Required}`;
+        }
     }
     //#endregion
 
@@ -530,14 +583,20 @@ export default class VuePageClass extends Vue {
             siteId: this.formData.siteId,
         };
 
-        let res = await ServerService.DeleteLocation(payload);
+        switch (this.dialogData.message) {
+            case this.$i18n.Dialog_DeleteMessage_items:
+                let res = await ServerService.DeleteLocation(payload);
 
-        if (res.result.errorcode !== 0) {
-            this.dialogData.isShow = true;
-            this.dialogData.message = res.result.message;
-            this.dialogData.showCancelButton = false;
+                if (res.result.errorcode !== 0) {
+                    this.dialogData.isShow = true;
+                    this.dialogData.message = res.result.message;
+                    this.dialogData.showCancelButton = false;
 
-            return false;
+                    return false;
+                }
+                break;
+
+            default:
         }
 
         this.pageToList();

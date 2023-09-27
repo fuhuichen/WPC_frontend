@@ -66,6 +66,14 @@ export const I18n = {
         'en-US': 'Confirm Password',
         'zh-TW': '確認密碼',
     },
+    Common_Date: {
+        'en-US': 'Data',
+        'zh-TW': '日期',
+    },
+    Common_Time: {
+        'en-US': 'Time',
+        'zh-TW': '時間',
+    },
     //#endregion
 
     //#region Form
@@ -344,6 +352,14 @@ export const I18n = {
         'en-US': 'Search',
         'zh-TW': '搜尋',
     },
+    Multiselect_DropdownPlaceholder: {
+        'en-US': 'Please select options',
+        'zh-TW': '請選擇選項',
+    },
+    Multiselect_Dropdown_SearchPlaceholder: {
+        'en-US': 'Search',
+        'zh-TW': '搜尋',
+    },
     //#endregion
 
     //#region User
@@ -463,6 +479,10 @@ export const I18n = {
     //#endregion
 
     //#region Management Member
+    Management_Member_Type: {
+        'en-US': 'Type',
+        'zh-TW': 'Type',
+    },
     Management_Member_Name: {
         'en-US': 'Name',
         'zh-TW': 'Name',
@@ -482,6 +502,17 @@ export const I18n = {
     Management_Member_Point: {
         'en-US': 'Point',
         'zh-TW': 'Point',
+    },
+    //#endregion
+
+    //#region Management Course
+    Management_Course_Date: {
+        'en-US': 'Date',
+        'zh-TW': 'Date',
+    },
+    Management_Course_Time: {
+        'en-US': 'Time',
+        'zh-TW': 'Time',
     },
     //#endregion
 

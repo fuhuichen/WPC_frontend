@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-show="pageTable">
-            <AicsLayoutPageTitle :text="$i18n['Router_/w-course-management']">
+            <AicsLayoutPageTitle :text="$i18n['Router_/w-user-management']">
                 <div class="page--title-tool-buttons">
                     <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Common_Create" @click="pageToCreate" />
                 </div>
@@ -42,7 +42,25 @@
         <AicsModal customClass="modal-width-600" :isShow="showModal" :title="modalTitle" @close="closeModal">
             <template #body>
                 <div>
-                    <AicsTextLabel :text="$i18n.Management_Member_Name" :required="true" />
+                    <AicsTextLabel :text="$i18n.Management_Member_Type" :required="!isEdit" />
+
+                    <AicsDropdown
+                        size="14"
+                        variant="grayscale-primary"
+                        v-model="formData.type"
+                        mode="outline"
+                        :allowEmpty="false"
+                        :options="filterOptions.typeOptions"
+                        :isWidth100Percent="true"
+                        :pagingI18n="pagingI18n"
+                        :placeholder="$i18n.Multiselect_DropdownPlaceholder"
+                        :searchPlaceholder="$i18n.Multiselect_Dropdown_SearchPlaceholder"
+                        :readonly="isEdit"
+                    />
+                </div>
+
+                <div class="mt-2">
+                    <AicsTextLabel :text="$i18n.Management_Member_Name" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
@@ -52,32 +70,32 @@
                         :debounce="50"
                         :placeholder="$i18n.Management_Member_Name"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
+                        :isError="inputErrorData.name"
                         :errorMessage="inputErrorMessage.name"
                         @input="inputName"
                     />
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Management_Member_Email" :required="true" />
+                    <AicsTextLabel :text="$i18n.Management_Member_Email" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
                         variant="grayscale-primary"
                         v-model.trim="formData.email"
                         name="email"
-                        :readonly="isEditUser"
+                        :readonly="isEdit"
                         :debounce="50"
                         :placeholder="$i18n.Management_Member_Email"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
+                        :isError="inputErrorData.email"
+                        :errorMessage="inputErrorMessage.email"
+                        @input="inputEmail"
                     />
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Management_Member_Password" />
+                    <AicsTextLabel :text="$i18n.Management_Member_Password" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
@@ -87,9 +105,9 @@
                         :debounce="50"
                         :placeholder="$i18n.Management_Member_Password"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
+                        :isError="inputErrorData.password"
+                        :errorMessage="inputErrorMessage.password"
+                        @input="inputPassword"
                     />
                 </div>
 
@@ -104,9 +122,6 @@
                         :debounce="50"
                         :placeholder="$i18n.Management_Member_Note"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
                     />
                 </div>
             </template>
@@ -121,7 +136,7 @@
                         @click="closeModal"
                     />
 
-                    <AicsButton :text="$i18n.Button_Confirm" @click="confirmModal" />
+                    <AicsButton :text="$i18n.Button_Confirm" @click="confirmModal" :disabled="disableSaveButton" />
                 </div>
             </template>
         </AicsModal>
@@ -239,6 +254,7 @@ export default class VuePageClass extends Vue {
     };
 
     private formDataOriginal: Model.IFormData = {
+        type: { key: 'user', value: 'User' },
         userId: '',
         name: '',
         email: '',
@@ -256,10 +272,9 @@ export default class VuePageClass extends Vue {
     };
 
     private inputErrorDataOriginal: Model.IInputError = {
-        nameInputError: false,
-        rtspInputError: false,
-        modalDropdownError: false,
-        deviceDropdownError: false,
+        email: false,
+        password: false,
+        name: false,
     };
 
     private inputErrorData: Model.IInputError = { ...this.inputErrorDataOriginal };
@@ -305,7 +320,14 @@ export default class VuePageClass extends Vue {
 
     private showModal: boolean = false;
     private modalTitle: string = this.$i18n.Common_Edit;
-    private isEditUser: boolean = false;
+    private isEdit: boolean = false;
+
+    private filterOptions: Model.IFilterOptions = {
+        typeOptions: [
+            { key: 'manager', value: 'Manager' },
+            { key: 'user', value: 'User' },
+        ],
+    };
 
     private stop$: Rx.Subject<boolean> = new Rx.Subject();
     //#endregion
@@ -326,6 +348,11 @@ export default class VuePageClass extends Vue {
 
         return tempTableApiParam;
     }
+
+    private get disableSaveButton(): boolean {
+        return Object.values(this.saveButtonDisable).some((x) => x === true);
+    }
+
     //#endregion
 
     //#region Watch
@@ -397,7 +424,10 @@ export default class VuePageClass extends Vue {
 
     private async pageToCreate(): Promise<void> {
         this.modalTitle = this.$i18n.Common_Create;
-        this.isEditUser = false;
+        this.isEdit = false;
+
+        this.formDataClear();
+
         this.formData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
 
         this.showModal = true;
@@ -405,11 +435,17 @@ export default class VuePageClass extends Vue {
 
     private async pageToEdit(value: Model.ITableData): Promise<void> {
         this.modalTitle = this.$i18n.Common_Edit;
-        this.isEditUser = true;
+        this.isEdit = true;
         this.formData.userId = value.userId;
         this.formData.name = value.name;
         this.formData.email = value.email;
         this.formData.note = value.note;
+        this.formData.type = { key: value.type, value: value.type };
+        this.formData.password = '';
+
+        this.saveButtonDisable.name = false;
+        this.saveButtonDisable.email = false;
+        this.saveButtonDisable.password = false;
 
         this.showModal = true;
     }
@@ -421,7 +457,7 @@ export default class VuePageClass extends Vue {
     private async confirmModal() {
         let res;
 
-        if (this.isEditUser) {
+        if (this.isEdit) {
             let payload = {
                 userId: this.formData.userId,
                 password: this.formData.password,
@@ -432,6 +468,7 @@ export default class VuePageClass extends Vue {
             res = await ServerService.UpdateUser(payload);
         } else {
             let payload = {
+                type: this.formData.type.key,
                 email: this.formData.email,
                 password: this.formData.password,
                 name: this.formData.name,
@@ -445,7 +482,7 @@ export default class VuePageClass extends Vue {
 
         if (res.result.errorcode !== 0) {
             this.dialogData.isShow = true;
-            this.dialogData.message = res.result.message;
+            this.dialogData.message = res.result.error_msg;
             this.dialogData.showCancelButton = false;
 
             return false;
@@ -457,18 +494,42 @@ export default class VuePageClass extends Vue {
 
     //#region Event input
     private inputName(): void {
+        if (this.isEdit) return null;
+
         if (!!this.formData.name) {
-            this.inputErrorData.nameInputError = false;
-
+            this.inputErrorData.name = false;
             this.saveButtonDisable.name = false;
-
             this.inputErrorMessage.name = '';
         } else {
-            this.inputErrorData.nameInputError = true;
-
+            this.inputErrorData.name = true;
             this.saveButtonDisable.name = true;
-
             this.inputErrorMessage.name = `${this.$i18n.Management_Member_Name} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
+    private inputEmail(): void {
+        if (this.isEdit) return null;
+
+        if (!!this.formData.email) {
+            this.inputErrorData.email = false;
+            this.saveButtonDisable.email = false;
+            this.inputErrorMessage.email = '';
+        } else {
+            this.inputErrorData.email = true;
+            this.saveButtonDisable.email = true;
+            this.inputErrorMessage.email = `${this.$i18n.Management_Member_Email} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
+    private inputPassword(): void {
+        if (this.isEdit) return null;
+
+        if (!!this.formData.password) {
+            this.inputErrorData.password = false;
+            this.saveButtonDisable.password = false;
+            this.inputErrorMessage.password = '';
+        } else {
+            this.inputErrorData.password = true;
+            this.saveButtonDisable.password = true;
+            this.inputErrorMessage.password = `${this.$i18n.Management_Member_Password} ${this.$i18n.Form_Value_Required}`;
         }
     }
     //#endregion
@@ -528,14 +589,20 @@ export default class VuePageClass extends Vue {
             userId: this.formData.userId,
         };
 
-        let res = await ServerService.DeleteUser(payload);
+        switch (this.dialogData.message) {
+            case this.$i18n.Dialog_DeleteMessage_items:
+                let res = await ServerService.DeleteUser(payload);
 
-        if (res.result.errorcode !== 0) {
-            this.dialogData.isShow = true;
-            this.dialogData.message = res.result.message;
-            this.dialogData.showCancelButton = false;
+                if (res.result.errorcode !== 0) {
+                    this.dialogData.isShow = true;
+                    this.dialogData.message = res.result.message;
+                    this.dialogData.showCancelButton = false;
 
-            return false;
+                    return false;
+                }
+                break;
+
+            default:
         }
 
         this.pageToList();

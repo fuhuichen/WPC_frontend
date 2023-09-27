@@ -32,22 +32,24 @@ export namespace ModelsLocation {
     }
 
     export interface IInputError {
-        nameInputError: boolean;
-        rtspInputError: boolean;
-        modalDropdownError: boolean;
-        deviceDropdownError: boolean;
+        name: boolean;
+        locationName: boolean;
+        type: boolean;
+        point: boolean;
     }
 
     export interface IInputErrorMessage {
         name: string;
-        email: string;
-        password: string;
+        locationName: string;
+        type: string;
+        point: string;
     }
 
     export interface ISaveButtonDisable {
         name: boolean;
-        email: boolean;
-        password: boolean;
+        locationName: boolean;
+        type: boolean;
+        point: boolean;
     }
     //#endregion
 }

@@ -42,41 +42,41 @@
         <AicsModal customClass="modal-width-600" :isShow="showModal" :title="modalTitle" @close="closeModal">
             <template #body>
                 <div>
-                    <AicsTextLabel :text="$i18n.Download_Course_BgName" :required="true" />
+                    <AicsTextLabel :text="$i18n.Download_Course_BgName" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
-                        name="name"
+                        v-model.trim="formData.bgName"
+                        name="bgName"
                         :debounce="50"
                         :placeholder="$i18n.Download_Course_BgName"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
+                        :isError="inputErrorData.bgName"
+                        :errorMessage="inputErrorMessage.bgName"
+                        @input="inputBgName"
                     />
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Download_Course_SectorName" :required="true" />
+                    <AicsTextLabel :text="$i18n.Download_Course_SectorName" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
-                        name="email"
+                        v-model.trim="formData.sectorName"
+                        name="sectorName"
                         :debounce="50"
                         :placeholder="$i18n.Download_Course_SectorName"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
+                        :isError="inputErrorData.sectorName"
+                        :errorMessage="inputErrorMessage.sectorName"
+                        @input="inputSectorName"
                     />
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Download_Course_CourseName" :required="true" />
+                    <AicsTextLabel :text="$i18n.Download_Course_CourseName" :required="!isEdit" />
 
                     <AicsInputText
                         size="14"
@@ -86,26 +86,58 @@
                         :debounce="50"
                         :placeholder="$i18n.Download_Course_CourseName"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
+                        :isError="inputErrorData.name"
                         :errorMessage="inputErrorMessage.name"
                         @input="inputName"
                     />
                 </div>
 
                 <div class="mt-2">
-                    <AicsTextLabel :text="$i18n.Management_Member_Note" />
+                    <AicsTextLabel :text="$i18n.Management_Course_Date" :required="!isEdit" />
 
-                    <AicsInputTextarea
+                    <AicsInputDatetime
                         size="14"
                         variant="grayscale-primary"
-                        v-model.trim="formData.name"
-                        name="note"
-                        :debounce="50"
-                        :placeholder="$i18n.Management_Member_Note"
+                        v-model="formData.date"
+                        mode="outline"
+                        :config="dateConfig"
+                        :isError="inputErrorData.date"
+                        :errorMessage="inputErrorMessage.date"
                         :isWidth100Percent="true"
-                        :isError="inputErrorData.nameInputError"
-                        :errorMessage="inputErrorMessage.name"
-                        @input="inputName"
+                        @input="inputDate"
+                    />
+                </div>
+
+                <div class="mt-2">
+                    <AicsTextLabel :text="$i18n.Management_Course_Time" :required="!isEdit" />
+
+                    <AicsInputDatetime
+                        size="14"
+                        variant="grayscale-primary"
+                        v-model="formData.time"
+                        mode="outline"
+                        :config="timeConfig"
+                        :isError="inputErrorData.time"
+                        :errorMessage="inputErrorMessage.time"
+                        :isWidth100Percent="true"
+                        @input="inputTime"
+                    />
+                </div>
+
+                <div class="mt-2">
+                    <AicsTextLabel :text="$i18n.Management_Member_Point" :required="!isEdit" />
+
+                    <AicsInputNumber
+                        size="14"
+                        variant="grayscale-primary"
+                        v-model.trim="formData.point"
+                        name="name"
+                        :debounce="50"
+                        :placeholder="$i18n.Management_Member_Point"
+                        :isWidth100Percent="true"
+                        :isError="inputErrorData.point"
+                        :errorMessage="inputErrorMessage.point"
+                        @input="inputPoint"
                     />
                 </div>
             </template>
@@ -120,7 +152,7 @@
                         @click="closeModal"
                     />
 
-                    <AicsButton :text="$i18n.Button_Confirm" @click="confirmModal" />
+                    <AicsButton :text="$i18n.Button_Confirm" @click="confirmModal" :disabled="disableSaveButton" />
                 </div>
             </template>
         </AicsModal>
@@ -154,8 +186,8 @@ import * as RxOperator from 'rxjs/operators';
 //#endregion
 
 //#region Framework
-import {} from '@/../helpers';
-import { TableModel, DropdownModel, NotificationToastModel, DialogModel } from '@/../components';
+import { DateTimeService } from '@/../helpers';
+import { TableModel, DropdownModel, NotificationToastModel, DialogModel, InputDatetimeModel } from '@/../components';
 //#endregion
 
 //#region Src
@@ -183,6 +215,8 @@ import {
     AicsDropdown,
     AicsInputTextarea,
     AicsModal,
+    AicsInputNumber,
+    AicsInputDatetime,
 } from '@/../components';
 //#endregion
 
@@ -204,6 +238,8 @@ import {
         AicsDropdown,
         AicsInputTextarea,
         AicsModal,
+        AicsInputNumber,
+        AicsInputDatetime,
     },
 })
 export default class VuePageClass extends Vue {
@@ -238,10 +274,13 @@ export default class VuePageClass extends Vue {
     };
 
     private formDataOriginal: Model.IFormData = {
+        courseId: '',
         name: '',
-        email: '',
-        password: '',
-        note: '',
+        date: null,
+        time: null,
+        bgName: '',
+        sectorName: '',
+        point: null,
     };
 
     private formData: Model.IFormData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
@@ -254,24 +293,32 @@ export default class VuePageClass extends Vue {
     };
 
     private inputErrorDataOriginal: Model.IInputError = {
-        nameInputError: false,
-        rtspInputError: false,
-        modalDropdownError: false,
-        deviceDropdownError: false,
+        name: false,
+        date: false,
+        time: false,
+        bgName: false,
+        sectorName: false,
+        point: false,
     };
 
     private inputErrorData: Model.IInputError = { ...this.inputErrorDataOriginal };
 
     private inputErrorMessage: Model.IInputErrorMessage = {
         name: '',
-        email: '',
-        password: '',
+        date: '',
+        time: '',
+        bgName: '',
+        sectorName: '',
+        point: '',
     };
 
     private saveButtonDisableOriginal: Model.ISaveButtonDisable = {
         name: true,
-        email: true,
-        password: true,
+        date: true,
+        time: true,
+        bgName: true,
+        sectorName: true,
+        point: true,
     };
 
     private saveButtonDisable: Model.ISaveButtonDisable = { ...this.saveButtonDisableOriginal };
@@ -303,6 +350,18 @@ export default class VuePageClass extends Vue {
 
     private showModal: boolean = false;
     private modalTitle: string = this.$i18n.Common_Edit;
+    private isEdit: boolean = false;
+
+    private dateConfig: InputDatetimeModel.IConfig = {
+        type: 'date',
+        format: InputDatetimeModel.EDatetimeFormat.date_slash_YYYYMMDD,
+        placeholder: this.$i18n.Common_Date,
+    };
+    private timeConfig: InputDatetimeModel.IConfig = {
+        type: 'time',
+        format: InputDatetimeModel.EDatetimeFormat.timeHHmm,
+        placeholder: this.$i18n.Common_Time,
+    };
 
     private stop$: Rx.Subject<boolean> = new Rx.Subject();
     //#endregion
@@ -322,6 +381,10 @@ export default class VuePageClass extends Vue {
         }
 
         return tempTableApiParam;
+    }
+
+    private get disableSaveButton(): boolean {
+        return Object.values(this.saveButtonDisable).some((x) => x === true);
     }
     //#endregion
 
@@ -360,9 +423,9 @@ export default class VuePageClass extends Vue {
     private initTableColumns(): void {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Course_BgName, key: 'name' },
-            { type: 'field', title: this.$i18n.Download_Course_SectorName, key: 'type' },
-            { type: 'field', title: this.$i18n.Download_Course_CourseName, key: 'modal' },
+            { type: 'field', title: this.$i18n.Download_Course_BgName, key: 'bgName' },
+            { type: 'field', title: this.$i18n.Download_Course_SectorName, key: 'sectorName' },
+            { type: 'field', title: this.$i18n.Download_Course_CourseName, key: 'name' },
             { type: 'field', title: this.$i18n.Common_Action, key: 'action', useSlot: true },
         ];
     }
@@ -394,11 +457,30 @@ export default class VuePageClass extends Vue {
 
     private async pageToCreate(): Promise<void> {
         this.modalTitle = this.$i18n.Common_Create;
+        this.isEdit = false;
+        this.formData = JSON.parse(JSON.stringify({ ...this.formDataOriginal }));
+
         this.showModal = true;
     }
 
     private async pageToEdit(value: Model.ITableData): Promise<void> {
         this.modalTitle = this.$i18n.Common_Edit;
+        this.isEdit = true;
+        this.formData.courseId = value.courseId;
+        this.formData.bgName = value.bgName;
+        this.formData.sectorName = value.sectorName;
+        this.formData.name = value.name;
+        this.formData.point = value.point;
+        this.formData.date = new Date(`2023/${value.date}`);
+        this.formData.time = new Date(`2023/${value.date} ${value.time}`);
+
+        this.saveButtonDisable.bgName = false;
+        this.saveButtonDisable.date = false;
+        this.saveButtonDisable.name = false;
+        this.saveButtonDisable.point = false;
+        this.saveButtonDisable.sectorName = false;
+        this.saveButtonDisable.time = false;
+
         this.showModal = true;
     }
 
@@ -406,43 +488,138 @@ export default class VuePageClass extends Vue {
         this.showModal = false;
     }
 
-    private confirmModal() {
+    private async confirmModal() {
+        let res;
+
+        if (this.isEdit) {
+            let payload = {
+                courseId: this.formData.courseId,
+                name: this.formData.name,
+                date: DateTimeService.datetime2String(new Date(this.formData.date), 'MM/DD'),
+                time: DateTimeService.datetime2String(new Date(this.formData.time), 'HH:mm'),
+                bgName: this.formData.bgName,
+                sectorName: this.formData.sectorName,
+                point: this.formData.point,
+            };
+
+            res = await ServerService.UpdateCourse(payload);
+        } else {
+            let payload = {
+                courseId: this.formData.courseId,
+                name: this.formData.name,
+                date: DateTimeService.datetime2String(new Date(this.formData.date), 'MM/DD'),
+                time: DateTimeService.datetime2String(new Date(this.formData.time), 'HH:mm'),
+                bgName: this.formData.bgName,
+                sectorName: this.formData.sectorName,
+                point: this.formData.point,
+            };
+
+            res = await ServerService.CreateCourse(payload);
+        }
+
         this.showModal = false;
+
+        if (res.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = res.result.error_msg;
+            this.dialogData.showCancelButton = false;
+
+            return false;
+        }
+
+        this.pageToList();
     }
     //#endregion
 
     //#region Event input
     private inputName(): void {
+        if (this.isEdit) return null;
+
         if (!!this.formData.name) {
-            this.inputErrorData.nameInputError = false;
-
+            this.inputErrorData.name = false;
             this.saveButtonDisable.name = false;
-
             this.inputErrorMessage.name = '';
         } else {
-            this.inputErrorData.nameInputError = true;
-
+            this.inputErrorData.name = true;
             this.saveButtonDisable.name = true;
+            this.inputErrorMessage.name = `${this.$i18n.Download_Member_CourseName} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
 
-            this.inputErrorMessage.name = `${this.$i18n.Management_Member_Name} ${this.$i18n.Form_Value_Required}`;
+    private inputBgName(): void {
+        if (this.isEdit) return null;
+
+        if (!!this.formData.bgName) {
+            this.inputErrorData.bgName = false;
+            this.saveButtonDisable.bgName = false;
+            this.inputErrorMessage.bgName = '';
+        } else {
+            this.inputErrorData.bgName = true;
+            this.saveButtonDisable.bgName = true;
+            this.inputErrorMessage.bgName = `${this.$i18n.Download_Course_BgName} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
+
+    private inputSectorName(): void {
+        if (this.isEdit) return null;
+
+        if (!!this.formData.sectorName) {
+            this.inputErrorData.sectorName = false;
+            this.saveButtonDisable.sectorName = false;
+            this.inputErrorMessage.sectorName = '';
+        } else {
+            this.inputErrorData.sectorName = true;
+            this.saveButtonDisable.sectorName = true;
+            this.inputErrorMessage.sectorName = `${this.$i18n.Download_Course_SectorName} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
+
+    private inputDate(): void {
+        if (this.isEdit) return null;
+
+        if (!!this.formData.date) {
+            this.inputErrorData.date = false;
+            this.saveButtonDisable.date = false;
+            this.inputErrorMessage.date = '';
+        } else {
+            this.inputErrorData.date = true;
+            this.saveButtonDisable.date = true;
+            this.inputErrorMessage.date = `${this.$i18n.Common_Date} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
+
+    private inputTime(): void {
+        if (this.isEdit) return null;
+
+        if (!!this.formData.time) {
+            this.inputErrorData.time = false;
+            this.saveButtonDisable.time = false;
+            this.inputErrorMessage.time = '';
+        } else {
+            this.inputErrorData.time = true;
+            this.saveButtonDisable.time = true;
+            this.inputErrorMessage.time = `${this.$i18n.Common_Time} ${this.$i18n.Form_Value_Required}`;
+        }
+    }
+
+    private inputPoint(data) {
+        if (this.isEdit) return null;
+
+        this.formData.point = parseInt(data);
+
+        if (!!this.formData.point) {
+            this.inputErrorData.point = false;
+            this.saveButtonDisable.point = false;
+            this.inputErrorMessage.point = '';
+        } else {
+            this.inputErrorData.point = true;
+            this.saveButtonDisable.point = true;
+            this.inputErrorMessage.point = `${this.$i18n.Management_Member_Point} ${this.$i18n.Form_Value_Required}`;
         }
     }
     //#endregion
 
     //#region Event button
-    private handleDelete(): void {
-        this.handleDeleteAsking();
-    }
-
-    private handleCancel(): void {
-        this.formDataClear();
-
-        this.pageToList();
-    }
-
-    private async handleSave(): Promise<void> {
-        this.pageToList();
-    }
 
     //#region Event table button
     private async actionEdit(value: Model.ITableData): Promise<void> {
@@ -450,7 +627,7 @@ export default class VuePageClass extends Vue {
     }
 
     private async actionDelete(value: Model.ITableData): Promise<void> {
-        this.handleDeleteAsking();
+        this.handleDeleteAsking(value);
     }
     //#endregion
     //#endregion
@@ -489,9 +666,31 @@ export default class VuePageClass extends Vue {
         this.closeDialog();
     }
 
-    private async confirmDialog(): Promise<void> {
+    private async confirmDialog() {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = true;
+
+        let payload = {
+            courseId: this.formData.courseId,
+        };
+
+        switch (this.dialogData.message) {
+            case this.$i18n.Dialog_DeleteMessage_items:
+                let res = await ServerService.DeleteCourse(payload);
+
+                if (res.result.errorcode !== 0) {
+                    this.dialogData.isShow = true;
+                    this.dialogData.message = res.result.message;
+                    this.dialogData.showCancelButton = false;
+
+                    return false;
+                }
+                break;
+
+            default:
+        }
+
+        this.pageToList();
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }
@@ -506,11 +705,13 @@ export default class VuePageClass extends Vue {
         this.inputName();
     }
 
-    private handleDeleteAsking(): void {
+    private handleDeleteAsking(value): void {
         this.dialogData.isShow = true;
         this.dialogData.title = this.$i18n.Dialog_Question;
         this.dialogData.type = 'warning';
         this.dialogData.showCancelButton = true;
+
+        this.formData.courseId = value.courseId;
 
         this.dialogData.message = this.$i18n.Dialog_DeleteMessage_items;
     }
@@ -572,7 +773,7 @@ export default class VuePageClass extends Vue {
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        let apiResult = await ServerService.GetUserList(this.tableApiParam);
+        let apiResult = await ServerService.GetCourseList(this.tableApiParam);
         let responseData: ServerNamespace.IServerResultError = undefined;
         if (!!apiResult.error) {
             responseData = apiResult.error;
@@ -586,7 +787,7 @@ export default class VuePageClass extends Vue {
 
         this.tableItem.paging = apiResult.result.paging;
 
-        this.tableSetData(apiResult.result.results);
+        this.tableSetData(apiResult.result.results.rows);
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);
@@ -595,33 +796,7 @@ export default class VuePageClass extends Vue {
     }
 
     private tableSetData(result: Model.IServerResponseData[]): void {
-        // let tableData: Model.ITableData[] = [];
-        // (result || []).forEach((element: Model.IServerResponseData) => {
-        //     if (element.type === ServerNamespace.ISourceCameraType.RTSP) {
-        //         tableData.push({
-        //             objectId: element.objectId ?? '',
-        //             name: element.name ?? '',
-        //             type: element.type ?? '',
-        //             modal: element.modal ?? '',
-        //             rtsp: element.rtsp ?? '',
-        //             remark: element.remark ?? '',
-        //             isChecked: '',
-        //             note: element.note ?? '',
-        //         });
-        //     } else if (element.type === ServerNamespace.ISourceCameraType.Webcam) {
-        //         tableData.push({
-        //             objectId: element.objectId ?? '',
-        //             name: element.name ?? '',
-        //             type: element.type ?? '',
-        //             modal: element.modal ?? '',
-        //             device: element.device ?? '',
-        //             remark: element.remark ?? '',
-        //             isChecked: '',
-        //             note: element.note ?? '',
-        //         });
-        //     }
-        // });
-        // this.tableItem.data = tableData;
+        this.tableItem.data = result;
     }
     //#endregion
     //#endregion

@@ -18,6 +18,7 @@ export namespace ModelsMember {
     export interface ITableApiParam extends ServerNamespace.IDataList {}
 
     export interface IFormData {
+        type: DropdownModel.IOption;
         userId?: string;
         name: string;
         email: string;
@@ -27,15 +28,12 @@ export namespace ModelsMember {
 
     export interface IFilterOptions {
         typeOptions: DropdownModel.IOption[];
-        modalOptions: DropdownModel.IOption[];
-        deviceOptions: DropdownModel.IOption[];
     }
 
     export interface IInputError {
-        nameInputError: boolean;
-        rtspInputError: boolean;
-        modalDropdownError: boolean;
-        deviceDropdownError: boolean;
+        email: boolean;
+        name: boolean;
+        password: boolean;
     }
 
     export interface IInputErrorMessage {

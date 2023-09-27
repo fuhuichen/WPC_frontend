@@ -323,7 +323,7 @@ export class ServerBase {
     }
 
     /**
-     * Get Source User List
+     *
      */
     public async GetUserList(): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>>;
     public async GetUserList(
@@ -377,7 +377,7 @@ export class ServerBase {
     }
 
     /**
-     * Get Update User List
+     *
      */
     public async UpdateUser(datas) {
         try {
@@ -398,13 +398,14 @@ export class ServerBase {
     }
 
     /**
-     * Get Create User List
+     *
      */
     public async CreateUser(datas) {
         try {
             let body: object = {
                 token: this._authorization,
                 email: datas.email,
+                type: datas.type,
                 password: datas.password,
                 name: datas.name,
                 note: datas.note,
@@ -419,7 +420,7 @@ export class ServerBase {
     }
 
     /**
-     * Get Delete User List
+     *
      */
     public async DeleteUser(datas) {
         try {
@@ -437,7 +438,7 @@ export class ServerBase {
     }
 
     /**
-     * Get Location List
+     *
      */
     public async GetLocationList(datas) {
         try {
@@ -483,7 +484,7 @@ export class ServerBase {
     }
 
     /**
-     * Get Update User List
+     *
      */
     public async UpdateLocation(datas) {
         try {
@@ -505,7 +506,7 @@ export class ServerBase {
     }
 
     /**
-     * Get Create User List
+     *
      */
     public async CreateLocation(datas) {
         try {
@@ -526,7 +527,7 @@ export class ServerBase {
     }
 
     /**
-     * Get Delete User List
+     *
      */
     public async DeleteLocation(datas) {
         try {
@@ -536,6 +537,114 @@ export class ServerBase {
             };
 
             let res = await this.BasePost('api/site/delete', body, 'json');
+
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     *
+     */
+    public async GetCourseList(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+            };
+
+            let res = await this.BasePost('api/course/list', body, 'json');
+
+            if (res.result.errorcode !== 0) {
+                return res;
+            }
+
+            let result = res.result.rows;
+
+            // pagination
+            let pageSize: number = datas.paging?.pageSize;
+            let total: number = result.length;
+            let totalPages: number = Math.ceil(total / pageSize);
+            let page: number = datas.paging.page;
+            if (page > totalPages) {
+                page = totalPages || 1;
+            }
+
+            result = result.slice((page - 1) * pageSize, page * pageSize);
+
+            let response = {
+                paging: {
+                    total: total,
+                    totalPages: totalPages,
+                    page: page,
+                    pageSize: pageSize,
+                },
+                results: { rows: result, bgList: res.result.bgList, sectorList: res.result.sectorList },
+            };
+
+            return {
+                result: response,
+            };
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    public async UpdateCourse(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                courseId: datas.courseId,
+                name: datas.name,
+                date: datas.date,
+                time: datas.time,
+                bgName: datas.bgName,
+                sectorName: datas.sectorName,
+                point: datas.point,
+            };
+
+            let res = await this.BasePost('api/course/update', body, 'json');
+
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     *
+     */
+    public async CreateCourse(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                name: datas.name,
+                date: datas.date,
+                time: datas.time,
+                bgName: datas.bgName,
+                sectorName: datas.sectorName,
+                point: datas.point,
+            };
+
+            let res = await this.BasePost('api/course/create', body, 'json');
+
+            return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     *
+     */
+    public async DeleteCourse(datas) {
+        try {
+            let body: object = {
+                token: this._authorization,
+                courseId: datas.courseId,
+            };
+
+            let res = await this.BasePost('api/course/delete', body, 'json');
 
             return res;
         } catch (e) {

@@ -204,3 +204,13 @@ export interface ILocationListRResponse {
     type: string;
     locationName: string;
 }
+
+export interface ICourseListRResponse {
+    courseId: string;
+    name: string;
+    date: string;
+    time: string;
+    bgName: string;
+    sectorName: string;
+    point: number;
+}
