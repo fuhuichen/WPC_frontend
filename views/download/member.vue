@@ -414,14 +414,17 @@ export default class VuePageClass extends Vue {
         // let apiResult = await ServerService.DetectiveRecordReads(this.tableApiParam);
         let apiResult = undefined;
         let responseData: ServerNamespace.IServerResultError = undefined;
-        if (!!apiResult.error) {
-            responseData = apiResult.error;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
             this.handleServerResponse([responseData]);
 
             this.loadingData.isShow = false;
-            this.$store.loading$.next(this.loadingData);
 
-            return false;
+            return null;
         }
 
         this.tableItem.paging = apiResult.result.paging;

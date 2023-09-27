@@ -456,6 +456,7 @@ export default class VuePageClass extends Vue {
 
     private async confirmModal() {
         let res;
+        let responseData: ServerNamespace.IServerResultError = undefined;
 
         if (this.isEdit) {
             let payload = {
@@ -480,12 +481,17 @@ export default class VuePageClass extends Vue {
 
         this.showModal = false;
 
-        if (res.result.errorcode !== 0) {
-            this.dialogData.isShow = true;
-            this.dialogData.message = res.result.error_msg;
-            this.dialogData.showCancelButton = false;
+        if (res.result.errorcode && res.result.errorcode !== 0) {
+            responseData = {
+                statusCode: res.result.errorcode,
+                message: res.result.error_msg,
+            };
 
-            return false;
+            this.handleServerResponse([responseData]);
+
+            this.loadingData.isShow = false;
+
+            return null;
         }
 
         this.pageToList();
@@ -691,15 +697,17 @@ export default class VuePageClass extends Vue {
         let apiResult = await ServerService.GetUserList(this.tableApiParam);
 
         let responseData: ServerNamespace.IServerResultError = undefined;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
 
-        if (!!apiResult.error) {
-            responseData = apiResult.error;
             this.handleServerResponse([responseData]);
 
             this.loadingData.isShow = false;
-            this.$store.loading$.next(this.loadingData);
 
-            return false;
+            return null;
         }
 
         if (!!apiResult.result.errorcode && apiResult.result.errorcode !== 0) {

@@ -20,8 +20,7 @@
                                 :options="filterOption.bgName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
-                                :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
+                                :placeholder="$i18n.Download_Location_LocationName"
                             />
                         </div>
 
@@ -37,8 +36,7 @@
                                 :options="filterOption.sectorName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
-                                :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
+                                :placeholder="$i18n.Download_Location_Type"
                             />
                         </div>
 
@@ -54,8 +52,7 @@
                                 :options="filterOption.courseName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
-                                :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
+                                :placeholder="$i18n.Download_Location_SiteName"
                             />
                         </div>
 
@@ -81,6 +78,9 @@
                         :pagingI18n="tablePagingI18n"
                         @tableReload="tableReload"
                     >
+                        <template #timestamp="props"> {{ resolveDate(props.scope.timestamp) }} </template>
+
+                        <template #name="props"> {{ props.scope.firstName }} {{ props.scope.lastName }} </template>
                     </AicsTable>
                 </AicsCardContainer>
             </div>
@@ -332,12 +332,12 @@ export default class VuePageClass extends Vue {
     private initTableColumns(): void {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Location_LocationName, key: 'date' },
-            { type: 'field', title: this.$i18n.Download_Location_Type, key: 'labelImageSrc' },
-            { type: 'field', title: this.$i18n.Download_Location_SiteName, key: 'labelName' },
-            { type: 'field', title: this.$i18n.Download_Course_AttendenceName, key: 'snapshotSrc' },
-            { type: 'field', title: this.$i18n.Download_Course_AttendenceEmail, key: 'snapshotSrc' },
-            { type: 'field', title: this.$i18n.Download_Course_CheckTime, key: 'snapshotSrc' },
+            { type: 'field', title: this.$i18n.Download_Location_LocationName, key: 'locationName' },
+            { type: 'field', title: this.$i18n.Download_Location_Type, key: 'type' },
+            { type: 'field', title: this.$i18n.Download_Location_SiteName, key: 'siteName' },
+            { type: 'field', title: this.$i18n.Download_Course_AttendenceName, key: 'name', useSlot: true },
+            { type: 'field', title: this.$i18n.Download_Course_AttendenceEmail, key: 'email' },
+            { type: 'field', title: this.$i18n.Download_Course_CheckTime, key: 'timestamp', useSlot: true },
         ];
     }
 
@@ -458,29 +458,35 @@ export default class VuePageClass extends Vue {
         }
     }
 
+    private resolveDate(value) {
+        const date = DateTimeService.datetime2String(new Date(value), 'YYYY/MM/DD HH:mm:ss');
+
+        return date;
+    }
+
     //#region Table
     private async tableGetApiData(): Promise<boolean> {
-        return;
-
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        // let apiResult = await ServerService.DetectiveRecordReads(this.tableApiParam);
-        let apiResult = undefined;
+        let apiResult = await ServerService.GetLocationActionList(this.tableApiParam);
         let responseData: ServerNamespace.IServerResultError = undefined;
-        if (!!apiResult.error) {
-            responseData = apiResult.error;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
             this.handleServerResponse([responseData]);
 
             this.loadingData.isShow = false;
-            this.$store.loading$.next(this.loadingData);
 
-            return false;
+            return null;
         }
 
         this.tableItem.paging = apiResult.result.paging;
 
-        this.tableSetData(apiResult.result.results);
+        this.tableSetData(apiResult.result.results.rows);
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);

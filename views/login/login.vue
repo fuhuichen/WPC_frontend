@@ -192,9 +192,14 @@ export default class VuePageClass extends Vue {
         this.loadingData.isShow = true;
 
         let apiResult = await ServerService.Login(payload);
+
         let responseData: ServerNamespace.IServerResultError = undefined;
-        if (!!apiResult.error) {
-            responseData = apiResult.error;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
             this.handleServerResponse([responseData]);
 
             this.loadingData.isShow = false;

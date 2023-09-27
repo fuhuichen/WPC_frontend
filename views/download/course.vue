@@ -2,7 +2,7 @@
     <div>
         <div v-show="pageTable">
             <AicsLayoutPageTitle :text="$i18n['Router_/w-download/course']">
-                <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Button_Export" @click="searchReset" />
+                <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Button_Export" @click="exportTable" />
             </AicsLayoutPageTitle>
 
             <div class="page">
@@ -20,8 +20,7 @@
                                 :options="filterOption.bgName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
-                                :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
+                                :placeholder="$i18n.Download_Course_BgName"
                             />
                         </div>
 
@@ -37,8 +36,7 @@
                                 :options="filterOption.sectorName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
-                                :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
+                                :placeholder="$i18n.Download_Course_SectorName"
                             />
                         </div>
 
@@ -54,8 +52,7 @@
                                 :options="filterOption.courseName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
-                                :placeholder="$i18n.Source_Camera_DropdownPlaceholder"
-                                :searchPlaceholder="$i18n.Source_Camera_Dropdown_SearchPlaceholder"
+                                :placeholder="$i18n.Download_Course_CourseName"
                             />
                         </div>
 
@@ -81,6 +78,9 @@
                         :pagingI18n="tablePagingI18n"
                         @tableReload="tableReload"
                     >
+                        <template #timestamp="props"> {{ resolveDate(props.scope.timestamp) }} </template>
+
+                        <template #name="props"> {{ props.scope.firstName }} {{ props.scope.lastName }} </template>
                     </AicsTable>
                 </AicsCardContainer>
             </div>
@@ -310,8 +310,6 @@ export default class VuePageClass extends Vue {
                 RxOperator.filter((n) => !n || n === this.pagePath),
                 RxOperator.takeUntil(this.stop$),
                 RxOperator.concatMap(async (x) => {
-                    this.searchReset();
-
                     if (this.pageItem.page === EPageStep.table) {
                         await this.initTable();
                     } else {
@@ -332,12 +330,12 @@ export default class VuePageClass extends Vue {
     private initTableColumns(): void {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Course_BgName, key: 'date' },
-            { type: 'field', title: this.$i18n.Download_Course_SectorName, key: 'labelImageSrc' },
-            { type: 'field', title: this.$i18n.Download_Course_CourseName, key: 'labelName' },
-            { type: 'field', title: this.$i18n.Download_Course_AttendenceName, key: 'snapshotSrc' },
-            { type: 'field', title: this.$i18n.Download_Course_AttendenceEmail, key: 'snapshotSrc' },
-            { type: 'field', title: this.$i18n.Download_Course_CheckTime, key: 'snapshotSrc' },
+            { type: 'field', title: this.$i18n.Download_Course_BgName, key: 'bgName' },
+            { type: 'field', title: this.$i18n.Download_Course_SectorName, key: 'sectorName' },
+            { type: 'field', title: this.$i18n.Download_Course_CourseName, key: 'courseName' },
+            { type: 'field', title: this.$i18n.Download_Course_AttendenceName, key: 'name', useSlot: true },
+            { type: 'field', title: this.$i18n.Download_Course_AttendenceEmail, key: 'email' },
+            { type: 'field', title: this.$i18n.Download_Course_CheckTime, key: 'timestamp', useSlot: true },
         ];
     }
 
@@ -366,10 +364,7 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Event search
-    private searchReset(): void {
-        this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataOriginal }));
-        this.filterDataTemp = JSON.parse(JSON.stringify({ ...this.filterDataOriginal }));
-    }
+    private exportTable(): void {}
 
     private async searchData(): Promise<void> {
         this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
@@ -458,29 +453,36 @@ export default class VuePageClass extends Vue {
         }
     }
 
+    private resolveDate(value) {
+        const date = DateTimeService.datetime2String(new Date(value), 'YYYY/MM/DD HH:mm:ss');
+
+        return date;
+    }
+
     //#region Table
     private async tableGetApiData(): Promise<boolean> {
-        return;
-
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        // let apiResult = await ServerService.DetectiveRecordReads(this.tableApiParam);
-        let apiResult = undefined;
+        let apiResult = await ServerService.GetCourseActionList(this.tableApiParam);
         let responseData: ServerNamespace.IServerResultError = undefined;
-        if (!!apiResult.error) {
-            responseData = apiResult.error;
+
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
             this.handleServerResponse([responseData]);
 
             this.loadingData.isShow = false;
-            this.$store.loading$.next(this.loadingData);
 
-            return false;
+            return null;
         }
 
         this.tableItem.paging = apiResult.result.paging;
 
-        this.tableSetData(apiResult.result.results);
+        this.tableSetData(apiResult.result.results.rows);
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);

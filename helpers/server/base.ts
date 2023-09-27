@@ -136,7 +136,7 @@ export class ServerBase {
      * @param data IWebLoginRequest
      * @returns IServerResult<IWebLoginResponse>
      */
-    public async Login(data: ServerNameSpace.IWebLoginRequest): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IWebLoginResponse>> {
+    public async Login(data: ServerNameSpace.IWebLoginRequest): Promise<ServerNameSpace.IServerResult<any>> {
         try {
             let body: object = {
                 email: data.username,
@@ -144,8 +144,14 @@ export class ServerBase {
             };
 
             let response = await this.BasePost('api/auth/login', body, 'json');
-            if (!!response.error) {
-                return response;
+
+            if (response.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: response.result.errorcode,
+                        error_msg: response.result.error_msg,
+                    },
+                };
             }
 
             let result: ServerNameSpace.IWebLoginResponse = {
@@ -192,146 +198,11 @@ export class ServerBase {
     }
 
     /**
-     * Detective Record Total
-     * @async
-     * @param data ITargetObjectSwitch
-     * @returns IServerResult<boolean>
-     */
-    public async DetectiveRecordReads(): Promise<
-        ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IDetectiveRecordsReponse>>
-    >;
-    public async DetectiveRecordReads(
-        data: ServerNameSpace.IDetectiveRecordsRequest,
-    ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IDetectiveRecordsReponse>>>;
-    public async DetectiveRecordReads(
-        data?: ServerNameSpace.IDetectiveRecordsRequest,
-    ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IDetectiveRecordsReponse>>> {
-        try {
-            let query: object = {};
-
-            if (!!data) {
-                query['keyword'] = !data.keyword ? undefined : data.keyword;
-                query['begin'] = !data.startDate ? undefined : DateTimeService.toString(data.startDate, 'YYYY-MM-DD');
-                query['end'] = !data.endDate ? undefined : DateTimeService.toString(data.endDate, 'YYYY-MM-DD');
-                query['from'] = !data.startTime ? undefined : DateTimeService.toString(data.startTime, 'HH:mm:ss');
-                query['to'] = !data.endTime ? undefined : DateTimeService.toString(data.endTime, 'HH:mm:ss');
-            }
-
-            let totalResponse = await this.BaseGet(`api/v1/tracking/count`, query, 'json');
-            if (!!totalResponse.error) {
-                return totalResponse;
-            }
-
-            let page: number = 0;
-            let pageSize: number = 0;
-            let total: number = totalResponse.result['total'] ?? 0;
-            let totalPages: number = 0;
-
-            if (!!data) {
-                // paging
-                if (!!data.paging) {
-                    page = data.paging.page;
-                    pageSize = data.paging.pageSize;
-                    totalPages = Math.ceil(total / pageSize);
-                    if (page > totalPages) {
-                        page = totalPages || 1;
-                    }
-
-                    query['limit'] = pageSize;
-                    query['skip'] = (page - 1) * pageSize;
-                }
-
-                // sorting
-                if (!!data.sorting) {
-                    // 1：大->小 desc , 0：小->大 asc，only need send desc to server
-                    // create_ts: data, label_name: name, channel_id: source
-                    switch (data.sorting.field) {
-                        case 'date':
-                            if (!data.sorting.order) {
-                                query['order'] = `${'create_ts'}`;
-                            } else {
-                                query['order'] = `${'create_ts'}.desc`;
-                            }
-                            break;
-
-                        case 'labelName':
-                            if (!data.sorting.order) {
-                                query['order'] = `${'label_name'}`;
-                            } else {
-                                query['order'] = `${'label_name'}.desc`;
-                            }
-                            break;
-
-                        case 'cameraName':
-                            if (!data.sorting.order) {
-                                query['order'] = `${'channel_id'}`;
-                            } else {
-                                query['order'] = `${'channel_id'}.desc`;
-                            }
-                            break;
-                    }
-                }
-            }
-
-            let responseTracking = await this.BaseGet('api/v1/tracking', query, 'json');
-            if (!!responseTracking.error) {
-                return responseTracking;
-            }
-
-            let result: ServerNameSpace.IDetectiveRecordsReponse[] = [];
-
-            for (let _result of responseTracking.result) {
-                let labelName: string = '';
-                let labelImageSrc: string = '';
-                if (!!_result['info']) {
-                    labelName = !_result['info']['label_name'] ? '' : _result['info']['label_name'];
-                    labelImageSrc = !_result['info']['label_image_base64'] ? '' : `data:image/jpeg;base64,${_result['info']['label_image_base64']}`;
-                }
-
-                let snapshotSrc: string = '';
-                if (!!_result['result_img']) {
-                    snapshotSrc = !_result['result_img']['image_base64'] ? '' : `data:image/jpeg;base64,${_result['result_img']['image_base64']}`;
-                }
-
-                result.push({
-                    objectId: _result['channel_id'],
-                    date: !_result['create_ts'] ? undefined : new Date(_result['create_ts']),
-                    cameraName: '',
-                    cameraType: '',
-                    labelName: labelName,
-                    labelImageSrc: labelImageSrc,
-                    snapshotSrc: snapshotSrc,
-                });
-            }
-
-            let response: ServerNameSpace.IPagingResponse<ServerNameSpace.IDetectiveRecordsReponse> = {
-                paging: {
-                    total: total,
-                    totalPages: totalPages,
-                    page: page,
-                    pageSize: pageSize,
-                },
-                results: result,
-            };
-
-            return {
-                result: response,
-            };
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    /**
      *
      */
-    public async GetUserList(): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>>;
-    public async GetUserList(
-        datas: ServerNameSpace.IDataList,
-    ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>>;
-    public async GetUserList(
-        datas?: ServerNameSpace.IDataList,
-    ): Promise<ServerNameSpace.IServerResult<ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse>>> {
+    public async GetUserList(): Promise<any>;
+    public async GetUserList(datas: ServerNameSpace.IDataList): Promise<any>;
+    public async GetUserList(datas?: ServerNameSpace.IDataList): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -342,7 +213,12 @@ export class ServerBase {
             let res = await this.BasePost('api/user/list', body, 'json');
 
             if (res.result.errorcode !== 0) {
-                return res;
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
             }
 
             result = res.result.rows;
@@ -379,7 +255,7 @@ export class ServerBase {
     /**
      *
      */
-    public async UpdateUser(datas) {
+    public async UpdateUser(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -391,6 +267,15 @@ export class ServerBase {
 
             let res = await this.BasePost('api/user/update', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
             return res;
         } catch (e) {
             throw e;
@@ -400,7 +285,7 @@ export class ServerBase {
     /**
      *
      */
-    public async CreateUser(datas) {
+    public async CreateUser(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -413,6 +298,14 @@ export class ServerBase {
 
             let res = await this.BasePost('api/user/create', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
             return res;
         } catch (e) {
             throw e;
@@ -422,7 +315,7 @@ export class ServerBase {
     /**
      *
      */
-    public async DeleteUser(datas) {
+    public async DeleteUser(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -431,6 +324,15 @@ export class ServerBase {
 
             let res = await this.BasePost('api/user/delete', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
             return res;
         } catch (e) {
             throw e;
@@ -440,7 +342,7 @@ export class ServerBase {
     /**
      *
      */
-    public async GetLocationList(datas) {
+    public async GetLocationList(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -449,7 +351,12 @@ export class ServerBase {
             let res = await this.BasePost('api/site/list', body, 'json');
 
             if (res.result.errorcode !== 0) {
-                return res;
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
             }
 
             let result = res.result.rows;
@@ -486,7 +393,7 @@ export class ServerBase {
     /**
      *
      */
-    public async UpdateLocation(datas) {
+    public async UpdateLocation(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -499,6 +406,15 @@ export class ServerBase {
 
             let res = await this.BasePost('api/site/update', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
             return res;
         } catch (e) {
             throw e;
@@ -508,7 +424,7 @@ export class ServerBase {
     /**
      *
      */
-    public async CreateLocation(datas) {
+    public async CreateLocation(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -520,6 +436,15 @@ export class ServerBase {
 
             let res = await this.BasePost('api/site/create', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
             return res;
         } catch (e) {
             throw e;
@@ -529,7 +454,7 @@ export class ServerBase {
     /**
      *
      */
-    public async DeleteLocation(datas) {
+    public async DeleteLocation(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -538,6 +463,15 @@ export class ServerBase {
 
             let res = await this.BasePost('api/site/delete', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
             return res;
         } catch (e) {
             throw e;
@@ -547,7 +481,7 @@ export class ServerBase {
     /**
      *
      */
-    public async GetCourseList(datas) {
+    public async GetCourseList(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -556,7 +490,12 @@ export class ServerBase {
             let res = await this.BasePost('api/course/list', body, 'json');
 
             if (res.result.errorcode !== 0) {
-                return res;
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
             }
 
             let result = res.result.rows;
@@ -590,7 +529,7 @@ export class ServerBase {
         }
     }
 
-    public async UpdateCourse(datas) {
+    public async UpdateCourse(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -605,6 +544,15 @@ export class ServerBase {
 
             let res = await this.BasePost('api/course/update', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
             return res;
         } catch (e) {
             throw e;
@@ -614,7 +562,7 @@ export class ServerBase {
     /**
      *
      */
-    public async CreateCourse(datas) {
+    public async CreateCourse(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -628,6 +576,15 @@ export class ServerBase {
 
             let res = await this.BasePost('api/course/create', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
             return res;
         } catch (e) {
             throw e;
@@ -637,7 +594,7 @@ export class ServerBase {
     /**
      *
      */
-    public async DeleteCourse(datas) {
+    public async DeleteCourse(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
@@ -646,7 +603,98 @@ export class ServerBase {
 
             let res = await this.BasePost('api/course/delete', body, 'json');
 
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
             return res;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    public async GetCourseActionList(datas): Promise<any> {
+        try {
+            let body: object = {
+                token: this._authorization,
+                courseIdList: datas.courseIdList,
+                pageIndex: datas.paging.page,
+                pageSize: datas.paging.pageSize,
+            };
+
+            let res = await this.BasePost('api/course/actionList', body, 'json');
+
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
+            let result = res.result.rows;
+
+            let response = {
+                paging: {
+                    total: res.result.rows.length,
+                    totalPages: res.result.totalPageNum,
+                    page: datas.paging.page,
+                    pageSize: datas.paging.pageSize,
+                },
+                results: { rows: result, bgList: res.result.bgList, sectorList: res.result.sectorList },
+            };
+
+            return {
+                result: response,
+            };
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    public async GetLocationActionList(datas): Promise<any> {
+        try {
+            let body: object = {
+                token: this._authorization,
+                locationList: datas.locationList,
+                typeList: datas.typeList,
+                siteIdList: datas.siteIdList,
+                pageIndex: datas.paging.page,
+                pageSize: datas.paging.pageSize,
+            };
+
+            let res = await this.BasePost('api/site/actionList', body, 'json');
+
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
+            let result = res.result.rows;
+
+            let response = {
+                paging: {
+                    total: res.result.rows.length,
+                    totalPages: res.result.totalPageNum,
+                    page: datas.paging.page,
+                    pageSize: datas.paging.pageSize,
+                },
+                results: { rows: result, bgList: res.result.bgList, sectorList: res.result.sectorList },
+            };
+
+            return {
+                result: response,
+            };
         } catch (e) {
             throw e;
         }

@@ -196,6 +196,18 @@ export const I18n = {
         'en-US': 'Some errors have occurred, please contact the system administrator, thank you',
         'zh-TW': '發生了某些錯誤，請聯絡系統管理員，謝謝',
     },
+    Server_ERR_ITEM_NOT_EXIST: {
+        'en-US': 'account is not existed',
+        'zh-TW': '使用者不存在',
+    },
+    Server_ERR_INVALID_PARAMETER: {
+        'en-US': 'Invalid parameter',
+        'zh-TW': '參數缺少或錯誤',
+    },
+    Server_ERR_AUTH_FAIL: {
+        'en-US': 'account or password is wrong',
+        'zh-TW': '密碼錯誤',
+    },
     //#endregion
 
     //#region Router
