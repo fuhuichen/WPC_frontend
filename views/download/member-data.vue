@@ -18,6 +18,9 @@
                         :pagingI18n="tablePagingI18n"
                         @tableReload="tableReload"
                     >
+                        <template #timestamp="props"> {{ resolveDate(props.scope.timestamp) }} </template>
+
+                        <template #name="props"> {{ props.scope.firstName }} {{ props.scope.lastName }} </template>
                     </AicsTable>
                 </AicsCardContainer>
             </div>
@@ -43,7 +46,7 @@
 
 <script lang="ts">
 //#region Vue
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 //#endregion
 
 //#region Module
@@ -57,7 +60,7 @@ import { TableModel, InputDatetimeModel } from '@/../components';
 //#endregion
 
 //#region Src
-import {} from '@/config';
+import { WebPath } from '@/config';
 import { EPageStep, EPageAction } from '@/enums';
 import { UtilityService, ServerNamespace, ResponseFilterService, ServerService } from '@/helpers';
 import { IViews } from '@/models';
@@ -105,6 +108,11 @@ import {
 })
 export default class VuePageClass extends Vue {
     //#region Prop
+    @Prop({
+        type: Array, // Boolean, Number, String, Array, Object
+        default: () => [],
+    })
+    private qrCodeNumberList: [];
     //#endregion
 
     //#region Variables
@@ -176,19 +184,19 @@ export default class VuePageClass extends Vue {
     private get tableApiParam(): Model.ITableApiParam {
         let tempTableApiParam: Model.ITableApiParam = {};
 
+        let qrCodeList = [];
+
+        this.qrCodeNumberList.forEach((item: any) => {
+            qrCodeList.push(item.qrCodeNumber);
+        });
+
         tempTableApiParam.paging = { page: this.tableItem.paging.page, pageSize: this.tableItem.paging.pageSize };
 
         if (this.tableItem.sorting?.orderEnum !== TableModel.ESorting.none) {
             tempTableApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
         }
 
-        const { keyword }: Model.IFilterData = this.filterData;
-
-        if (!!keyword) {
-            tempTableApiParam.keyword = keyword;
-        } else {
-            delete tempTableApiParam.keyword;
-        }
+        tempTableApiParam.qrCodeNumberList = qrCodeList;
 
         return tempTableApiParam;
     }
@@ -231,15 +239,15 @@ export default class VuePageClass extends Vue {
     private initTableColumns(): void {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'date' },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'labelImageSrc' },
-            { type: 'field', title: this.$i18n.Download_Member_CheckTime, key: 'labelName' },
-            { type: 'field', title: this.$i18n.Download_Member_ActionType, key: 'labelName' },
-            { type: 'field', title: this.$i18n.Download_Member_WPCPoint, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'name', useSlot: true },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'email' },
+            { type: 'field', title: this.$i18n.Download_Member_CheckTime, key: 'timestamp', useSlot: true },
+            { type: 'field', title: this.$i18n.Download_Member_ActionType, key: 'type' },
+            { type: 'field', title: this.$i18n.Download_Member_WPCPoint, key: 'point' },
             { type: 'field', title: this.$i18n.Download_Member_TotalWPCPoint, key: 'labelName' },
-            { type: 'field', title: this.$i18n.Download_Member_CourseName, key: 'labelName' },
-            { type: 'field', title: this.$i18n.Download_Member_SiteName, key: 'labelName' },
-            { type: 'field', title: this.$i18n.Download_Member_ItemName, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_CourseName, key: 'courseName' },
+            { type: 'field', title: this.$i18n.Download_Member_SiteName, key: 'siteName' },
+            { type: 'field', title: this.$i18n.Download_Member_ItemName, key: 'itemName' },
         ];
     }
 
@@ -285,6 +293,12 @@ export default class VuePageClass extends Vue {
         this.tableItem.paging.page = 1;
         await this.tableReload();
     }
+
+    private resolveDate(value) {
+        const date = DateTimeService.datetime2String(new Date(value), 'YYYY/MM/DD HH:mm:ss');
+
+        return date;
+    }
     //#endregion
 
     //#region Event table
@@ -321,9 +335,23 @@ export default class VuePageClass extends Vue {
         this.closeDialog();
     }
 
-    private async confirmDialog(): Promise<void> {
+    private async confirmDialog() {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = true;
+
+        switch (this.dialogData.message) {
+            case this.$i18n.Server_ERR_INVALID_PERMSSION:
+                this.$router.push(WebPath.Home);
+                break;
+            case this.$i18n.Server_ERR_INVALID_TOKEN:
+                ServerService.Logout();
+                this.$router.push(WebPath.Login);
+                break;
+            default:
+                break;
+        }
+
+        this.pageToList();
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }
@@ -362,14 +390,12 @@ export default class VuePageClass extends Vue {
 
     //#region Table
     private async tableGetApiData(): Promise<boolean> {
-        return;
-
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        // let apiResult = await ServerService.DetectiveRecordReads(this.tableApiParam);
-        let apiResult = undefined;
+        let apiResult = await ServerService.GetMemberActionList(this.tableApiParam);
         let responseData: ServerNamespace.IServerResultError = undefined;
+
         if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
             responseData = {
                 statusCode: apiResult.result.errorcode,
@@ -385,7 +411,7 @@ export default class VuePageClass extends Vue {
 
         this.tableItem.paging = apiResult.result.paging;
 
-        this.tableSetData(apiResult.result.results);
+        this.tableSetData(apiResult.result.results.rows);
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);

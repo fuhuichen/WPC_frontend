@@ -14,10 +14,10 @@
                             <AicsDropdown
                                 size="14"
                                 variant="grayscale-primary"
-                                v-model="filterDataTemp.bgName"
+                                v-model="filterDataTemp.location"
                                 mode="outline"
                                 :allowEmpty="false"
-                                :options="filterOption.bgName"
+                                :options="filterOption.location"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Location_LocationName"
@@ -30,10 +30,10 @@
                             <AicsDropdown
                                 size="14"
                                 variant="grayscale-primary"
-                                v-model="filterDataTemp.sectorName"
+                                v-model="filterDataTemp.type"
                                 mode="outline"
                                 :allowEmpty="false"
-                                :options="filterOption.sectorName"
+                                :options="filterOption.type"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Location_Type"
@@ -46,10 +46,12 @@
                             <AicsDropdown
                                 size="14"
                                 variant="grayscale-primary"
-                                v-model="filterDataTemp.courseName"
+                                v-model="filterDataTemp.site"
                                 mode="outline"
-                                :allowEmpty="false"
-                                :options="filterOption.courseName"
+                                :multiple="true"
+                                :allowEmpty="true"
+                                :closeOnSelect="false"
+                                :options="filterOption.site"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Location_SiteName"
@@ -120,7 +122,7 @@ import { TableModel, InputDatetimeModel, DropdownModel } from '@/../components';
 //#endregion
 
 //#region Src
-import {} from '@/config';
+import { WebPath } from '@/config';
 import { EPageStep, EPageAction } from '@/enums';
 import { UtilityService, ServerNamespace, ResponseFilterService, ServerService } from '@/helpers';
 import { IViews } from '@/models';
@@ -197,17 +199,17 @@ export default class VuePageClass extends Vue {
     };
 
     private filterDataOriginal: Model.IFilterData = {
-        bgName: [],
-        sectorName: [],
-        courseName: [],
+        location: [],
+        type: [],
+        site: [],
     };
     private filterData: Model.IFilterData = { ...this.filterDataOriginal };
     private filterDataTemp: Model.IFilterData = { ...this.filterDataOriginal };
 
     private filterOption: Model.IFilterData = {
-        bgName: [],
-        sectorName: [],
-        courseName: [],
+        location: [],
+        type: [],
+        site: [],
     };
 
     private pagingI18n: DropdownModel.IPagingI18n = {
@@ -259,37 +261,25 @@ export default class VuePageClass extends Vue {
             tempTableApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
         }
 
-        const { bgName, sectorName, courseName }: Model.IFilterData = this.filterData;
+        const { location, type, site }: Model.IFilterData = this.filterData;
 
-        // if (!!keyword) {
-        //     tempTableApiParam.keyword = keyword;
-        // } else {
-        //     delete tempTableApiParam.keyword;
-        // }
+        if (!!location) {
+            tempTableApiParam.location = location;
+        } else {
+            delete tempTableApiParam.location;
+        }
 
-        // if (!!startDate) {
-        //     tempTableApiParam.startDate = startDate;
-        // } else {
-        //     delete tempTableApiParam.startDate;
-        // }
+        if (!!type) {
+            tempTableApiParam.type = type;
+        } else {
+            delete tempTableApiParam.type;
+        }
 
-        // if (!!endDate) {
-        //     tempTableApiParam.endDate = endDate;
-        // } else {
-        //     delete tempTableApiParam.endDate;
-        // }
-
-        // if (!!startTime) {
-        //     tempTableApiParam.startTime = startTime;
-        // } else {
-        //     delete tempTableApiParam.startTime;
-        // }
-
-        // if (!!endTime) {
-        //     tempTableApiParam.endTime = endTime;
-        // } else {
-        //     delete tempTableApiParam.endTime;
-        // }
+        if (!!site) {
+            tempTableApiParam.site = site.map((x) => x.key as string);
+        } else {
+            delete tempTableApiParam.site;
+        }
 
         return tempTableApiParam;
     }
@@ -313,6 +303,7 @@ export default class VuePageClass extends Vue {
                     this.searchReset();
 
                     if (this.pageItem.page === EPageStep.table) {
+                        await this.initOption();
                         await this.initTable();
                     } else {
                         await this.pageToList();
@@ -350,6 +341,74 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Init select option
+    private async initOption(): Promise<boolean> {
+        this.loadingData.isShow = true;
+        this.$store.loading$.next(this.loadingData);
+
+        let apiResult = await ServerService.GetLocationList(this.tableApiParam);
+
+        let responseData: ServerNamespace.IServerResultError = undefined;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
+            this.handleServerResponse([responseData]);
+
+            this.loadingData.isShow = false;
+
+            return null;
+        }
+
+        if (!!apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = apiResult.result.error_msg;
+            this.dialogData.showCancelButton = false;
+
+            return false;
+        }
+        const { locationList, typeList, rows } = apiResult.result.results;
+
+        const locationOption = [];
+        const typeOption = [];
+        const siteOption = [];
+        locationList.forEach((x) => {
+            let item = {
+                key: x,
+                value: x,
+            };
+
+            locationOption.push(item);
+        });
+
+        typeList.forEach((x) => {
+            let item = {
+                key: x,
+                value: x,
+            };
+
+            typeOption.push(item);
+        });
+
+        rows.forEach((x) => {
+            let item = {
+                key: x.siteId,
+                value: x.name,
+            };
+
+            siteOption.push(item);
+        });
+
+        this.filterOption.location = locationOption;
+        this.filterOption.type = typeOption;
+        this.filterOption.site = siteOption;
+
+        this.loadingData.isShow = false;
+        this.$store.loading$.next(this.loadingData);
+
+        return true;
+    }
     //#endregion
     //#endregion
 
@@ -419,9 +478,23 @@ export default class VuePageClass extends Vue {
         this.closeDialog();
     }
 
-    private async confirmDialog(): Promise<void> {
+    private async confirmDialog() {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = true;
+
+        switch (this.dialogData.message) {
+            case this.$i18n.Server_ERR_INVALID_PERMSSION:
+                this.$router.push(WebPath.Home);
+                break;
+            case this.$i18n.Server_ERR_INVALID_TOKEN:
+                ServerService.Logout();
+                this.$router.push(WebPath.Login);
+                break;
+            default:
+                break;
+        }
+
+        this.pageToList();
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }

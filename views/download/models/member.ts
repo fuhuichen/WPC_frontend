@@ -15,6 +15,7 @@ export namespace ModelsMember {
         labelName: string;
         objectId: string;
         snapshotSrc: string;
+        isChecked?: string;
     }
 
     export interface ITableApiParam extends ServerNamespace.IDetectiveRecordsRequest {}

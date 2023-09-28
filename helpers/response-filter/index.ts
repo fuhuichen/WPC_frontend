@@ -17,7 +17,10 @@ export class ServiceResponseFilter {
     public handleResponseMessages(vue: Vue, data: ServerNamespace.IServerResultError[], expandStatusCodeMessage?: object): IViews.IResponseSortData {
         let originalStatusCodeMessage: object = {
             '1': vue.$i18n.Server_ERR_INVALID_PARAMETER,
+            '2': vue.$i18n.Server_ERR_ITEM_EXIST,
             '3': vue.$i18n.Server_ERR_ITEM_NOT_EXIST,
+            '4': vue.$i18n.Server_ERR_INVALID_TOKEN,
+            '6': vue.$i18n.Server_ERR_INVALID_PERMSSION,
             '8': vue.$i18n.Server_ERR_AUTH_FAIL,
             '400': vue.$i18n.Server_Exception_400,
             '401': vue.$i18n.Server_Exception_401,

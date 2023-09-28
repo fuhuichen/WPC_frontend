@@ -191,7 +191,7 @@ import { TableModel, DropdownModel, NotificationToastModel, DialogModel, InputDa
 //#endregion
 
 //#region Src
-import {} from '@/config';
+import { WebPath } from '@/config';
 import { EPageStep, EPageAction } from '@/enums';
 import { ResponseFilterService, UtilityService, ServerNamespace, ServerService, RegexService } from '@/helpers';
 import { IViews } from '@/models';
@@ -692,8 +692,15 @@ export default class VuePageClass extends Vue {
                     return false;
                 }
                 break;
-
+            case this.$i18n.Server_ERR_INVALID_PERMSSION:
+                this.$router.push(WebPath.Home);
+                break;
+            case this.$i18n.Server_ERR_INVALID_TOKEN:
+                ServerService.Logout();
+                this.$router.push(WebPath.Login);
+                break;
             default:
+                break;
         }
 
         this.pageToList();

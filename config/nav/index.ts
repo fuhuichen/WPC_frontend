@@ -39,12 +39,14 @@ export const NavSystemAdministratorListOriginal: LayoutNavModel.IList[] = [
         title: undefined,
         titleI18nKey: 'Router_/w-course-management',
         href: WebPath.CourseList,
+        isLock: true,
         exactPath: true,
     },
     {
         title: undefined,
         titleI18nKey: 'Router_/w-location-management',
         href: WebPath.LocationList,
+        isLock: true,
         exactPath: true,
     },
     {

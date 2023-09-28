@@ -16,7 +16,7 @@
                                 variant="grayscale-primary"
                                 v-model="filterDataTemp.bgName"
                                 mode="outline"
-                                :allowEmpty="false"
+                                :allowEmpty="true"
                                 :options="filterOption.bgName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
@@ -32,7 +32,7 @@
                                 variant="grayscale-primary"
                                 v-model="filterDataTemp.sectorName"
                                 mode="outline"
-                                :allowEmpty="false"
+                                :allowEmpty="true"
                                 :options="filterOption.sectorName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
@@ -48,7 +48,9 @@
                                 variant="grayscale-primary"
                                 v-model="filterDataTemp.courseName"
                                 mode="outline"
-                                :allowEmpty="false"
+                                :allowEmpty="true"
+                                :multiple="true"
+                                :closeOnSelect="false"
                                 :options="filterOption.courseName"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
@@ -120,7 +122,7 @@ import { TableModel, InputDatetimeModel, DropdownModel } from '@/../components';
 //#endregion
 
 //#region Src
-import {} from '@/config';
+import { WebPath } from '@/config';
 import { EPageStep, EPageAction } from '@/enums';
 import { UtilityService, ServerNamespace, ResponseFilterService, ServerService } from '@/helpers';
 import { IViews } from '@/models';
@@ -261,35 +263,23 @@ export default class VuePageClass extends Vue {
 
         const { bgName, sectorName, courseName }: Model.IFilterData = this.filterData;
 
-        // if (!!keyword) {
-        //     tempTableApiParam.keyword = keyword;
-        // } else {
-        //     delete tempTableApiParam.keyword;
-        // }
+        if (!!bgName) {
+            tempTableApiParam.bgName = bgName;
+        } else {
+            delete tempTableApiParam.bgName;
+        }
 
-        // if (!!startDate) {
-        //     tempTableApiParam.startDate = startDate;
-        // } else {
-        //     delete tempTableApiParam.startDate;
-        // }
+        if (!!sectorName) {
+            tempTableApiParam.sectorName = sectorName;
+        } else {
+            delete tempTableApiParam.sectorName;
+        }
 
-        // if (!!endDate) {
-        //     tempTableApiParam.endDate = endDate;
-        // } else {
-        //     delete tempTableApiParam.endDate;
-        // }
-
-        // if (!!startTime) {
-        //     tempTableApiParam.startTime = startTime;
-        // } else {
-        //     delete tempTableApiParam.startTime;
-        // }
-
-        // if (!!endTime) {
-        //     tempTableApiParam.endTime = endTime;
-        // } else {
-        //     delete tempTableApiParam.endTime;
-        // }
+        if (!!courseName) {
+            tempTableApiParam.courseName = courseName.map((x) => x.key as string);
+        } else {
+            delete tempTableApiParam.courseName;
+        }
 
         return tempTableApiParam;
     }
@@ -311,6 +301,7 @@ export default class VuePageClass extends Vue {
                 RxOperator.takeUntil(this.stop$),
                 RxOperator.concatMap(async (x) => {
                     if (this.pageItem.page === EPageStep.table) {
+                        await this.initOption();
                         await this.initTable();
                     } else {
                         await this.pageToList();
@@ -348,6 +339,74 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Init select option
+    private async initOption(): Promise<boolean> {
+        this.loadingData.isShow = true;
+        this.$store.loading$.next(this.loadingData);
+
+        let apiResult = await ServerService.GetCourseList(this.tableApiParam);
+
+        let responseData: ServerNamespace.IServerResultError = undefined;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
+            this.handleServerResponse([responseData]);
+
+            this.loadingData.isShow = false;
+
+            return null;
+        }
+
+        if (!!apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = apiResult.result.error_msg;
+            this.dialogData.showCancelButton = false;
+
+            return false;
+        }
+        const { bgList, sectorList, rows } = apiResult.result.results;
+
+        const bgNameList = [];
+        const sectorNameList = [];
+        const courseIdList = [];
+        bgList.forEach((x) => {
+            let item = {
+                key: x,
+                value: x,
+            };
+
+            bgNameList.push(item);
+        });
+
+        sectorList.forEach((x) => {
+            let item = {
+                key: x,
+                value: x,
+            };
+
+            sectorNameList.push(item);
+        });
+
+        rows.forEach((x) => {
+            let item = {
+                key: x.courseId,
+                value: x.name,
+            };
+
+            courseIdList.push(item);
+        });
+
+        this.filterOption.bgName = bgNameList;
+        this.filterOption.sectorName = sectorNameList;
+        this.filterOption.courseName = courseIdList;
+
+        this.loadingData.isShow = false;
+        this.$store.loading$.next(this.loadingData);
+
+        return true;
+    }
     //#endregion
     //#endregion
 
@@ -414,9 +473,23 @@ export default class VuePageClass extends Vue {
         this.closeDialog();
     }
 
-    private async confirmDialog(): Promise<void> {
+    private async confirmDialog() {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = true;
+
+        switch (this.dialogData.message) {
+            case this.$i18n.Server_ERR_INVALID_PERMSSION:
+                this.$router.push(WebPath.Home);
+                break;
+            case this.$i18n.Server_ERR_INVALID_TOKEN:
+                ServerService.Logout();
+                this.$router.push(WebPath.Login);
+                break;
+            default:
+                break;
+        }
+
+        this.pageToList();
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }

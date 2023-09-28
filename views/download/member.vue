@@ -38,6 +38,7 @@
                                     size="14"
                                     :text="$i18n.Download_Member_AttendenceData"
                                     @click="goDownloadTable"
+                                    :disabled="disableButton"
                                 />
                             </div>
                         </div>
@@ -56,12 +57,13 @@
                         :pagingI18n="tablePagingI18n"
                         @tableReload="tableReload"
                     >
+                        <template #name="props"> {{ props.scope.firstName }} {{ props.scope.lastName }} </template>
                     </AicsTable>
                 </AicsCardContainer>
             </div>
         </div>
 
-        <MemberData v-if="pageTable && tableView === 'download'" />
+        <MemberData v-if="pageTable && tableView === 'download'" :qrCodeNumberList="selectedItems" />
 
         <AicsDialog
             :isShow="dialogData.isShow"
@@ -96,9 +98,9 @@ import { TableModel } from '@/../components';
 //#endregion
 
 //#region Src
-import {} from '@/config';
+import { WebPath } from '@/config';
 import { EPageStep, EPageAction } from '@/enums';
-import { UtilityService, ServerNamespace, ResponseFilterService } from '@/helpers';
+import { UtilityService, ServerNamespace, ResponseFilterService, ServerService } from '@/helpers';
 import { IViews } from '@/models';
 import { ILoadingData, LoadingData } from '@/stores/loading';
 import { INotificationToastData, NotificationToastData } from '@/stores/notification-toast';
@@ -234,6 +236,14 @@ export default class VuePageClass extends Vue {
 
         return tempTableApiParam;
     }
+
+    private get selectedItems(): Model.ITableData[] {
+        return this.tableItem.data.filter((n) => !!n.isChecked);
+    }
+
+    private get disableButton() {
+        return this.selectedItems.length === 0;
+    }
     //#endregion
 
     //#region Watch
@@ -273,11 +283,11 @@ export default class VuePageClass extends Vue {
     //#region Init table
     private initTableColumns(): void {
         this.tableItem.columns = [
-            { type: 'checkbox', optionKey: 'objectId', valueKey: 'isChecked', isDisabledKey: 'isDisabled' },
+            { type: 'checkbox', optionKey: 'qrCodeNumber', valueKey: 'isChecked', isDisabledKey: 'isDisabled' },
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Member_QRCodeNumber, key: 'date' },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'labelImageSrc' },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'labelName' },
+            { type: 'field', title: this.$i18n.Download_Member_QRCodeNumber, key: 'qrCodeNumber' },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'name', useSlot: true },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'email' },
         ];
     }
 
@@ -365,9 +375,23 @@ export default class VuePageClass extends Vue {
         this.closeDialog();
     }
 
-    private async confirmDialog(): Promise<void> {
+    private async confirmDialog() {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = true;
+
+        switch (this.dialogData.message) {
+            case this.$i18n.Server_ERR_INVALID_PERMSSION:
+                this.$router.push(WebPath.Home);
+                break;
+            case this.$i18n.Server_ERR_INVALID_TOKEN:
+                ServerService.Logout();
+                this.$router.push(WebPath.Login);
+                break;
+            default:
+                break;
+        }
+
+        this.pageToList();
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }
@@ -406,14 +430,12 @@ export default class VuePageClass extends Vue {
 
     //#region Table
     private async tableGetApiData(): Promise<boolean> {
-        return;
-
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        // let apiResult = await ServerService.DetectiveRecordReads(this.tableApiParam);
-        let apiResult = undefined;
+        let apiResult = await ServerService.GetMemberList(this.tableApiParam);
         let responseData: ServerNamespace.IServerResultError = undefined;
+
         if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
             responseData = {
                 statusCode: apiResult.result.errorcode,
@@ -429,7 +451,7 @@ export default class VuePageClass extends Vue {
 
         this.tableItem.paging = apiResult.result.paging;
 
-        this.tableSetData(apiResult.result.results);
+        this.tableSetData(apiResult.result.results.rows);
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);
@@ -438,7 +460,10 @@ export default class VuePageClass extends Vue {
     }
 
     private tableSetData(result: Model.IServerResponseData[]): void {
-        this.tableItem.data = result;
+        this.tableItem.data = result.map((item) => ({
+            ...item,
+            isChecked: '',
+        }));
     }
     //#endregion
     //#endregion

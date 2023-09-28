@@ -63,6 +63,7 @@ export interface IWebLoginResponse {
     token: string;
     type: string;
     userId: string;
+    name: string;
 }
 
 /**
@@ -99,10 +100,13 @@ export interface ITargetObjectSwitch {
  *
  */
 export interface IDetectiveRecordsRequest extends IDataList {
-    startDate?: Date;
-    endDate?: Date;
-    startTime?: Date;
-    endTime?: Date;
+    qrCodeNumberList?: string[];
+    location?: object;
+    type?: object;
+    bgName?: object;
+    sectorName?: object;
+    site?: string[];
+    courseName?: string[];
 }
 
 /**

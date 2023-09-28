@@ -208,6 +208,18 @@ export const I18n = {
         'en-US': 'account or password is wrong',
         'zh-TW': '密碼錯誤',
     },
+    Server_ERR_INVALID_PERMSSION: {
+        'en-US': 'No permission',
+        'zh-TW': '無權限',
+    },
+    Server_ERR_INVALID_TOKEN: {
+        'en-US': 'please log in',
+        'zh-TW': '登入過期，請重新登入',
+    },
+    Server_ERR_ITEM_EXIST: {
+        'en-US': 'User already exists',
+        'zh-TW': '使用者已存在',
+    },
     //#endregion
 
     //#region Router
@@ -536,6 +548,10 @@ export const I18n = {
     Role_Enum_EUserRole_admin: {
         'en-US': 'Admin',
         'zh-TW': 'Admin',
+    },
+    Role_Enum_EUserRole_user: {
+        'en-US': 'user',
+        'zh-TW': 'user',
     },
     //#endregion
 };

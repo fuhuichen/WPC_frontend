@@ -20,9 +20,9 @@ export namespace ModelsLocation {
     export interface ITableApiParam extends ServerNamespace.IDetectiveRecordsRequest {}
 
     export interface IFilterData {
-        bgName: DropdownModel.IOption[];
-        sectorName: DropdownModel.IOption[];
-        courseName: DropdownModel.IOption[];
+        location: DropdownModel.IOption[];
+        type: DropdownModel.IOption[];
+        site: DropdownModel.IOption[];
     }
     //#endregion
 }

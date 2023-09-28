@@ -268,8 +268,13 @@ export default class VuePageClass extends Vue {
         if (!navLists) {
             isDeepZero = false;
 
-            if (this.user.user.roles.some((n) => n.name === EUserRole.Administrator)) {
+            if (
+                this.user.user.roles.some((n) => n.name === EUserRole.Administrator) ||
+                this.user.user.roles.some((n) => n.name === EUserRole.Manager)
+            ) {
                 navLists = JSON.parse(JSON.stringify(NavSystemAdministratorListOriginal));
+            } else if (this.user.user.roles.some((n) => n.name === EUserRole.User)) {
+                navLists = JSON.parse(JSON.stringify(NavSystemAdministratorListOriginal)).filter((item) => !item.isLock);
             } else {
                 console.error('user role not allow');
                 return null;
@@ -327,9 +332,19 @@ export default class VuePageClass extends Vue {
 
         this.navUserName = this.user.user.name;
 
-        if (this.user.user.roles.some((n) => n.name === EUserRole.Administrator)) {
+        if (this.user.user.roles.some((n) => n.name !== EUserRole.Administrator)) {
             this.navUserActions = [
                 this.$i18n.User_ChangePassword,
+                {
+                    groupName: this.$i18n.User_Language,
+                    actions: I18nNamespace.I18nOptions.map((n) => n.value),
+                },
+                this.$i18n.User_Logout,
+            ];
+        }
+
+        if (this.user.user.roles.some((n) => n.name === EUserRole.Administrator)) {
+            this.navUserActions = [
                 {
                     groupName: this.$i18n.User_Language,
                     actions: I18nNamespace.I18nOptions.map((n) => n.value),

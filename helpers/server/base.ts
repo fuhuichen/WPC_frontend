@@ -158,6 +158,7 @@ export class ServerBase {
                 token: response.result.token,
                 type: response.result.type,
                 userId: response.result.userId,
+                name: response.result.name,
             };
 
             this._authorization = response.result.token;
@@ -622,7 +623,7 @@ export class ServerBase {
         try {
             let body: object = {
                 token: this._authorization,
-                courseIdList: datas.courseIdList,
+                courseIdList: datas?.courseName.length === 0 ? null : datas?.courseName,
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
             };
@@ -662,14 +663,98 @@ export class ServerBase {
         try {
             let body: object = {
                 token: this._authorization,
-                locationList: datas.locationList,
-                typeList: datas.typeList,
-                siteIdList: datas.siteIdList,
+                locationList: datas.location?.key ?? null,
+                typeList: datas.type?.key ?? null,
+                siteIdList: datas?.site.length === 0 ? null : datas?.site,
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
             };
 
             let res = await this.BasePost('api/site/actionList', body, 'json');
+
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
+            let result = res.result.rows;
+
+            let response = {
+                paging: {
+                    total: res.result.rows.length,
+                    totalPages: res.result.totalPageNum,
+                    page: datas.paging.page,
+                    pageSize: datas.paging.pageSize,
+                },
+                results: { rows: result, bgList: res.result.bgList, sectorList: res.result.sectorList },
+            };
+
+            return {
+                result: response,
+            };
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    public async GetMemberList(datas): Promise<any> {
+        try {
+            let body: object = {
+                token: this._authorization,
+                pageIndex: datas.paging.page,
+                pageSize: datas.paging.pageSize,
+            };
+
+            let res = await this.BasePost('api/member/list', body, 'json');
+
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
+            let result = res.result.rows;
+
+            if (!!datas.keyword) {
+                let keyword: string = datas.keyword.toLocaleLowerCase();
+                result = result.filter((x) => x.email.toLocaleLowerCase().indexOf(keyword) > -1);
+            }
+
+            let response = {
+                paging: {
+                    total: res.result.rows.length,
+                    totalPages: res.result.totalPageNum,
+                    page: datas.paging.page,
+                    pageSize: datas.paging.pageSize,
+                },
+                results: { rows: result, bgList: res.result.bgList, sectorList: res.result.sectorList },
+            };
+
+            return {
+                result: response,
+            };
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    public async GetMemberActionList(datas): Promise<any> {
+        try {
+            let body: object = {
+                token: this._authorization,
+                qrCodeNumberList: datas.qrCodeNumberList,
+                pageIndex: datas.paging.page,
+                pageSize: datas.paging.pageSize,
+            };
+
+            let res = await this.BasePost('api/member/actionList', body, 'json');
 
             if (res.result.errorcode !== 0) {
                 return {

@@ -209,7 +209,7 @@ export default class VuePageClass extends Vue {
 
         this.loadingData.isShow = false;
 
-        let { userId, token, type }: Model.IServerResponseData = apiResult.result;
+        let { userId, token, type, name }: Model.IServerResponseData = apiResult.result;
 
         UserService.user = {
             sessionId: token,
@@ -217,7 +217,7 @@ export default class VuePageClass extends Vue {
                 objectId: userId,
                 roles: [{ objectId: userId, name: type }],
                 username: type,
-                name: type,
+                name: name || type,
                 email: undefined,
             },
         };
