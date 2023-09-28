@@ -248,8 +248,8 @@ export const I18n = {
         'zh-TW': '首頁',
     },
     'Router_/w-download': {
-        'en-US': 'Activity data download',
-        'zh-TW': '活動資料下載',
+        'en-US': 'Activity data',
+        'zh-TW': '活動數據',
     },
     'Router_/w-download/course': {
         'en-US': 'Course attendance',
