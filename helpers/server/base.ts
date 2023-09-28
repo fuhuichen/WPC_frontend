@@ -745,6 +745,33 @@ export class ServerBase {
         }
     }
 
+    public async UserPasswordUpdate(datas): Promise<any> {
+        try {
+            let body: object = {
+                token: this._authorization,
+                password: datas.password,
+            };
+
+            let res = await this.BasePost('api/auth/changePwd', body, 'json');
+
+            if (res.result.errorcode !== 0) {
+                return {
+                    result: {
+                        errorcode: res.result.errorcode,
+                        error_msg: res.result.error_msg,
+                    },
+                };
+            }
+
+            let response = res;
+
+            return {
+                result: response,
+            };
+        } catch (e) {
+            throw e;
+        }
+    }
     public async GetMemberActionList(datas): Promise<any> {
         try {
             let body: object = {

@@ -20,30 +20,6 @@
                     <img :src="handRightSrc" />
                 </div>
 
-                <div class="tip-normal--level1-text">{{ $i18n.Password_AtLeastCapital }}</div>
-            </div>
-
-            <div class="tip-normal--level1">
-                <div class="tip-normal--level1-img">
-                    <img :src="handRightSrc" />
-                </div>
-
-                <div class="tip-normal--level1-text">{{ $i18n.Password_AtLeastLowercase }}</div>
-            </div>
-
-            <div class="tip-normal--level1">
-                <div class="tip-normal--level1-img">
-                    <img :src="handRightSrc" />
-                </div>
-
-                <div class="tip-normal--level1-text">{{ $i18n.Password_AtLeastNumber }}</div>
-            </div>
-
-            <div class="tip-normal--level1">
-                <div class="tip-normal--level1-img">
-                    <img :src="handRightSrc" />
-                </div>
-
                 <div class="tip-normal--level1-text">{{ $i18n.Password_AtLeastSpecial }}</div>
             </div>
         </div>
@@ -56,8 +32,6 @@
                     size="14"
                     variant="grayscale-primary"
                     v-model="formData.oldPassword"
-                    :size="size"
-                    :variant="variant"
                     :mode="mode"
                     :debounce="debounce"
                     :disabled="disabled"
@@ -76,8 +50,6 @@
                     size="14"
                     variant="grayscale-primary"
                     v-model="formData.password"
-                    :size="size"
-                    :variant="variant"
                     :mode="mode"
                     :debounce="debounce"
                     :disabled="disabled"
@@ -96,8 +68,6 @@
                     size="14"
                     variant="grayscale-primary"
                     v-model="formData.confirmPassword"
-                    :size="size"
-                    :variant="variant"
                     :mode="mode"
                     :debounce="debounce"
                     :disabled="disabled"
@@ -252,7 +222,7 @@ export default class VuePageClass extends Vue {
     };
 
     private formButtonDisabled: Model.IFormButtonDisabled = {
-        oldPassword: true,
+        oldPassword: false,
         password: true,
         confirmPassword: true,
     };
@@ -311,13 +281,13 @@ export default class VuePageClass extends Vue {
 
     private inputPassword(): void {
         if (!!this.formData.password) {
-            if (new RegExp(RegexService.strongPassword()).test(this.formData.password)) {
-                this.formButtonDisabled.password = false;
-                this.formError.password = false;
-            } else {
+            if (this.formData.password.length < 3) {
                 this.formButtonDisabled.password = true;
                 this.formErrorMessage.password = this.formErrorMessageDefault.password;
                 this.formError.password = true;
+            } else {
+                this.formButtonDisabled.password = false;
+                this.formError.password = false;
             }
         } else {
             this.formButtonDisabled.password = true;

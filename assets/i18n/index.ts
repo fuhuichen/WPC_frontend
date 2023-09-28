@@ -47,8 +47,8 @@ export const I18n = {
         'zh-TW': '動作',
     },
     Common_ErrorFormat_Password: {
-        'en-US': 'Password format error, please check again',
-        'zh-TW': '密碼格式錯誤，請再次檢查',
+        'en-US': 'At least 3 characters',
+        'zh-TW': '至少3 個字符',
     },
     Common_ErrorFormat_ConfirmPassword: {
         'en-US': 'Password and confirm password do not match',
@@ -73,6 +73,10 @@ export const I18n = {
     Common_Time: {
         'en-US': 'Time',
         'zh-TW': '時間',
+    },
+    Common_ErrorFormat_Email: {
+        'en-US': 'Email format is incorrect',
+        'zh-TW': '不符合Email格式',
     },
     //#endregion
 
@@ -326,8 +330,8 @@ export const I18n = {
         'zh-TW': '密碼規則：',
     },
     Password_AtLeast8Characters: {
-        'en-US': 'At least 8 characters',
-        'zh-TW': '至少8 個字符',
+        'en-US': 'At least 3 characters',
+        'zh-TW': '至少3 個字符',
     },
     Password_AtLeastCapital: {
         'en-US': 'At least 1 capital english alphabet',

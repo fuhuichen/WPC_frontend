@@ -5,7 +5,7 @@
         <div class="page">
             <AicsCardContainer variant="1px">
                 <div class="pt-3 pb-3 pl-4 pr-4">
-                    <AicsFormPassword :isShowOldPassword="true" @inputFormPassword="inputFormPassword" />
+                    <AicsFormPassword :isShowOldPassword="false" @inputFormPassword="inputFormPassword" />
 
                     <div class="mt-4 page--form--button">
                         <AicsButton
@@ -212,24 +212,26 @@ export default class VuePageClass extends Vue {
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        const { oldPassword, password }: Model.IFormData = this.formData;
+        const { password }: Model.IFormData = this.formData;
 
         let param: Model.IDataSaveParam = {
-            previous: oldPassword,
-            current: password,
+            password,
         };
 
-        // let apiResult = await ServerService.UserPasswordUpdate(param);
-        // let responseData: ServerNamespace.IServerResultError[] = [];
-        // if (!!apiResult.error) {
-        //     responseData = Array.isArray(apiResult.error) ? apiResult.error : [apiResult.error];
-        //     this.handleServerResponse(responseData);
+        let apiResult = await ServerService.UserPasswordUpdate(param);
+        let responseData: ServerNamespace.IServerResultError = undefined;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
 
-        //     this.loadingData.isShow = false;
-        //     this.$store.loading$.next(this.loadingData);
+            this.handleServerResponse([responseData]);
 
-        //     return null;
-        // }
+            this.loadingData.isShow = false;
+
+            return null;
+        }
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);

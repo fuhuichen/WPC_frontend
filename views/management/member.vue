@@ -516,9 +516,15 @@ export default class VuePageClass extends Vue {
         if (this.isEdit) return null;
 
         if (!!this.formData.email) {
-            this.inputErrorData.email = false;
-            this.saveButtonDisable.email = false;
-            this.inputErrorMessage.email = '';
+            if (new RegExp(RegexService.email()).test(this.formData.email)) {
+                this.inputErrorData.email = false;
+                this.saveButtonDisable.email = false;
+                this.inputErrorMessage.email = '';
+            } else {
+                this.inputErrorData.email = true;
+                this.saveButtonDisable.email = true;
+                this.inputErrorMessage.email = this.$i18n.Common_ErrorFormat_Email;
+            }
         } else {
             this.inputErrorData.email = true;
             this.saveButtonDisable.email = true;
@@ -529,9 +535,15 @@ export default class VuePageClass extends Vue {
         if (this.isEdit) return null;
 
         if (!!this.formData.password) {
-            this.inputErrorData.password = false;
-            this.saveButtonDisable.password = false;
-            this.inputErrorMessage.password = '';
+            if (this.formData.password.length < 3) {
+                this.saveButtonDisable.password = true;
+                this.inputErrorMessage.password = this.$i18n.Common_ErrorFormat_Password;
+                this.inputErrorData.password = true;
+            } else {
+                this.inputErrorData.password = false;
+                this.saveButtonDisable.password = false;
+                this.inputErrorMessage.password = '';
+            }
         } else {
             this.inputErrorData.password = true;
             this.saveButtonDisable.password = true;
