@@ -463,8 +463,8 @@ export default class VuePageClass extends Vue {
         if (this.isEdit) {
             let payload = {
                 userId: this.formData.userId,
-                password: this.formData.password,
-                name: this.formData.name,
+                password: !!this.formData.password ? this.formData.password : null,
+                name: !!this.formData.name ? this.formData.name : null,
                 note: this.formData.note,
             };
 

@@ -497,11 +497,11 @@ export default class VuePageClass extends Vue {
         if (this.isEdit) {
             let payload = {
                 courseId: this.formData.courseId,
-                name: this.formData.name,
-                date: DateTimeService.datetime2String(new Date(this.formData.date), 'MM/DD'),
-                time: DateTimeService.datetime2String(new Date(this.formData.time), 'HH:mm'),
-                bgName: this.formData.bgName,
-                sectorName: this.formData.sectorName,
+                name: !!this.formData.name ? this.formData.name : null,
+                date: !!this.formData.date ? DateTimeService.datetime2String(new Date(this.formData.date), 'MM/DD') : null,
+                time: !!this.formData.time ? DateTimeService.datetime2String(new Date(this.formData.time), 'HH:mm') : null,
+                bgName: !!this.formData.bgName ? this.formData.bgName : null,
+                sectorName: !!this.formData.sectorName ? this.formData.sectorName : null,
                 point: this.formData.point,
             };
 

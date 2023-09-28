@@ -440,9 +440,9 @@ export default class VuePageClass extends Vue {
         if (this.isEdit) {
             let payload = {
                 siteId: this.formData.siteId,
-                name: this.formData.name,
-                locationName: this.formData.locationName,
-                type: this.formData.type,
+                name: !!this.formData.name ? this.formData.name : null,
+                locationName: !!this.formData.locationName ? this.formData.locationName : null,
+                type: !!this.formData.type ? this.formData.type : null,
                 point: this.formData.point,
             };
 
