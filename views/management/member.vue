@@ -443,6 +443,8 @@ export default class VuePageClass extends Vue {
         this.formData.type = { key: value.type, value: value.type };
         this.formData.password = '';
 
+        this.inputErrorData = JSON.parse(JSON.stringify({ ...this.inputErrorDataOriginal }));
+
         this.saveButtonDisable.name = false;
         this.saveButtonDisable.email = false;
         this.saveButtonDisable.password = false;
@@ -500,7 +502,7 @@ export default class VuePageClass extends Vue {
 
     //#region Event input
     private inputName(): void {
-        if (this.isEdit) return null;
+        // if (this.isEdit) return null;
 
         if (!!this.formData.name) {
             this.inputErrorData.name = false;
@@ -513,7 +515,7 @@ export default class VuePageClass extends Vue {
         }
     }
     private inputEmail(): void {
-        if (this.isEdit) return null;
+        // if (this.isEdit) return null;
 
         if (!!this.formData.email) {
             if (new RegExp(RegexService.email()).test(this.formData.email)) {
@@ -532,7 +534,7 @@ export default class VuePageClass extends Vue {
         }
     }
     private inputPassword(): void {
-        if (this.isEdit) return null;
+        // if (this.isEdit) return null;
 
         if (!!this.formData.password) {
             if (this.formData.password.length < 3) {
