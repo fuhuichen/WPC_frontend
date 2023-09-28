@@ -502,7 +502,7 @@ export default class VuePageClass extends Vue {
 
     //#region Event input
     private inputName(): void {
-        // if (this.isEdit) return null;
+        if (this.isEdit) return null;
 
         if (!!this.formData.name) {
             this.inputErrorData.name = false;
@@ -515,7 +515,7 @@ export default class VuePageClass extends Vue {
         }
     }
     private inputEmail(): void {
-        // if (this.isEdit) return null;
+        if (this.isEdit) return null;
 
         if (!!this.formData.email) {
             if (new RegExp(RegexService.email()).test(this.formData.email)) {
@@ -534,22 +534,38 @@ export default class VuePageClass extends Vue {
         }
     }
     private inputPassword(): void {
-        // if (this.isEdit) return null;
-
-        if (!!this.formData.password) {
-            if (this.formData.password.length < 3) {
-                this.saveButtonDisable.password = true;
-                this.inputErrorMessage.password = this.$i18n.Common_ErrorFormat_Password;
-                this.inputErrorData.password = true;
+        if (this.isEdit) {
+            if (!!this.formData.password) {
+                if (this.formData.password.length < 3) {
+                    this.saveButtonDisable.password = true;
+                    this.inputErrorMessage.password = this.$i18n.Common_ErrorFormat_Password;
+                    this.inputErrorData.password = true;
+                } else {
+                    this.inputErrorData.password = false;
+                    this.saveButtonDisable.password = false;
+                    this.inputErrorMessage.password = '';
+                }
             } else {
                 this.inputErrorData.password = false;
                 this.saveButtonDisable.password = false;
                 this.inputErrorMessage.password = '';
             }
         } else {
-            this.inputErrorData.password = true;
-            this.saveButtonDisable.password = true;
-            this.inputErrorMessage.password = `${this.$i18n.Management_Member_Password} ${this.$i18n.Form_Value_Required}`;
+            if (!!this.formData.password) {
+                if (this.formData.password.length < 3) {
+                    this.saveButtonDisable.password = true;
+                    this.inputErrorMessage.password = this.$i18n.Common_ErrorFormat_Password;
+                    this.inputErrorData.password = true;
+                } else {
+                    this.inputErrorData.password = false;
+                    this.saveButtonDisable.password = false;
+                    this.inputErrorMessage.password = '';
+                }
+            } else {
+                this.inputErrorData.password = true;
+                this.saveButtonDisable.password = true;
+                this.inputErrorMessage.password = `${this.$i18n.Management_Member_Password} ${this.$i18n.Form_Value_Required}`;
+            }
         }
     }
     //#endregion

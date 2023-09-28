@@ -419,6 +419,8 @@ export default class VuePageClass extends Vue {
         this.formData.point = value.point;
         this.formData.type = value.type;
 
+        this.inputErrorData = JSON.parse(JSON.stringify({ ...this.inputErrorDataOriginal }));
+
         this.saveButtonDisable.name = false;
         this.saveButtonDisable.locationName = false;
         this.saveButtonDisable.point = false;

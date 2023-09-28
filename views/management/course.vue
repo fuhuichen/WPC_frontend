@@ -474,6 +474,8 @@ export default class VuePageClass extends Vue {
         this.formData.date = new Date(`2023/${value.date}`);
         this.formData.time = new Date(`2023/${value.date} ${value.time}`);
 
+        this.inputErrorData = JSON.parse(JSON.stringify({ ...this.inputErrorDataOriginal }));
+
         this.saveButtonDisable.bgName = false;
         this.saveButtonDisable.date = false;
         this.saveButtonDisable.name = false;
