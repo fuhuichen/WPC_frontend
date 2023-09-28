@@ -69,36 +69,6 @@ export interface IWebLoginResponse {
 /**
  *
  */
-export interface ITargetObjectResponse {
-    objectId: string;
-    name: string;
-    labels: ITargetObjectLabelResponse[];
-}
-
-/**
- *
- */
-export interface ITargetObjectLabelResponse {
-    objectId: number;
-    name: string;
-    isActivated: boolean;
-    imageSrc: string;
-    code: string;
-}
-
-/**
- *
- */
-export interface ITargetObjectSwitch {
-    modalId: string;
-    objectId: number;
-    code: string;
-    isActivated: boolean;
-}
-
-/**
- *
- */
 export interface IDetectiveRecordsRequest extends IDataList {
     qrCodeNumberList?: string[];
     location?: object;
@@ -167,25 +137,6 @@ export interface IAccountRResponse {
 }
 
 /**
- * Interface for Source Picture R Response
- */
-export interface ISourcePictureRResponse {
-    objectId: string;
-    name: string;
-    account: string;
-    status: boolean;
-    remark: string;
-}
-
-/**
- *
- */
-export enum ISourceCameraType {
-    RTSP = 'RTSP',
-    Webcam = 'Webcam',
-}
-
-/**
  * Interface for Source Camera R Response
  */
 export interface IUserListRResponse {
@@ -194,11 +145,6 @@ export interface IUserListRResponse {
     type: string;
     userId: string;
     note?: string;
-}
-
-export interface IUserUpdateRResponse {
-    errorcode: number;
-    message?: string;
 }
 
 export interface ILocationListRResponse {
