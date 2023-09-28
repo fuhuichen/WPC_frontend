@@ -90,21 +90,7 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Variables
-    private user: UserNamespace.IUser = {
-        sessionId: 'asdasd',
-        user: {
-            roles: [
-                {
-                    objectId: 'Administrator',
-                    name: 'SystemAdministrator',
-                },
-            ],
-            username: 'Administrator',
-            name: 'Administrator',
-            objectId: 'Administrator',
-            email: 'ttt@yahoo.com.tw',
-        },
-    };
+    private user: UserNamespace.IUser = undefined;
 
     private headerTitle: string = '';
     private headerBreadcrumbs: LayoutHeaderModel.IBreadcrumb[] = [];
@@ -321,6 +307,7 @@ export default class VuePageClass extends Vue {
     }
     private initUser(): void {
         this.user = UserService.user;
+
         if (!this.user) {
             this.$router.push(WebPath.Login);
             return null;

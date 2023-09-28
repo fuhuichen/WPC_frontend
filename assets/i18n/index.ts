@@ -553,6 +553,10 @@ export const I18n = {
         'en-US': 'Admin',
         'zh-TW': 'Admin',
     },
+    Role_Enum_EUserRole_manager: {
+        'en-US': 'Manager',
+        'zh-TW': 'Manager',
+    },
     Role_Enum_EUserRole_user: {
         'en-US': 'user',
         'zh-TW': 'user',
