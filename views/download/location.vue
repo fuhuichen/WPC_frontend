@@ -1,8 +1,8 @@
 <template>
     <div>
         <div v-show="pageTable">
-            <AicsLayoutPageTitle :text="$i18n['Router_/w-download/course']">
-                <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Button_Export" @click="searchReset" />
+            <AicsLayoutPageTitle :text="$i18n['Router_/w-download/location']">
+                <AicsButton variant="secondary" mode="filled" size="14" :text="$i18n.Button_Export" @click="exportTable" />
             </AicsLayoutPageTitle>
 
             <div class="page">
@@ -114,6 +114,7 @@ import { Vue, Component } from 'vue-property-decorator';
 //#region Module
 import * as Rx from 'rxjs';
 import * as RxOperator from 'rxjs/operators';
+import ExcelJs from 'exceljs';
 //#endregion
 
 //#region Framework
@@ -283,6 +284,38 @@ export default class VuePageClass extends Vue {
 
         return tempTableApiParam;
     }
+
+    private get tableExcelApiParam(): Model.ITableApiParam {
+        let tableExcelApiParam: Model.ITableApiParam = {};
+
+        tableExcelApiParam.paging = { page: this.tableItem.paging.page, pageSize: 1000000 };
+
+        if (this.tableItem.sorting?.orderEnum !== TableModel.ESorting.none) {
+            tableExcelApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
+        }
+
+        const { location, type, site }: Model.IFilterData = this.filterData;
+
+        if (!!location) {
+            tableExcelApiParam.location = location;
+        } else {
+            delete tableExcelApiParam.location;
+        }
+
+        if (!!type) {
+            tableExcelApiParam.type = type;
+        } else {
+            delete tableExcelApiParam.type;
+        }
+
+        if (!!site) {
+            tableExcelApiParam.site = site.map((x) => x.key as string);
+        } else {
+            delete tableExcelApiParam.site;
+        }
+
+        return tableExcelApiParam;
+    }
     //#endregion
 
     //#region Watch
@@ -300,8 +333,6 @@ export default class VuePageClass extends Vue {
                 RxOperator.filter((n) => !n || n === this.pagePath),
                 RxOperator.takeUntil(this.stop$),
                 RxOperator.concatMap(async (x) => {
-                    this.searchReset();
-
                     if (this.pageItem.page === EPageStep.table) {
                         await this.initOption();
                         await this.initTable();
@@ -425,9 +456,64 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Event search
-    private searchReset(): void {
-        this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataOriginal }));
-        this.filterDataTemp = JSON.parse(JSON.stringify({ ...this.filterDataOriginal }));
+    private async exportTable(): Promise<void> {
+        this.loadingData.isShow = true;
+        this.$store.loading$.next(this.loadingData);
+
+        const sheetName = this.$i18n['Router_/w-download/location'];
+        const workbook = new ExcelJs.Workbook();
+        const sheet = workbook.addWorksheet(sheetName);
+
+        this.tableItem.columns;
+
+        const sheetColumn = this.tableItem.columns.map((x: any) => ({
+            header: x.title,
+            key: x?.key ?? 'no',
+        }));
+
+        let apiResult = await ServerService.GetLocationActionList(this.tableExcelApiParam);
+        let responseData: ServerNamespace.IServerResultError = undefined;
+
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
+            this.handleServerResponse([responseData]);
+            this.loadingData.isShow = false;
+
+            return null;
+        }
+
+        const sheetRow = apiResult.result.results.rows.map((x, index) => ({
+            no: index + 1,
+            locationName: x?.locationName ?? '',
+            type: x?.type ?? '',
+            siteName: x?.siteName ?? '',
+            name: `${x?.firstName ?? ''} ${x?.lastName ?? ''}`,
+            email: x?.email ?? '',
+            timestamp: this.resolveDate(x?.timestamp ?? ''),
+        }));
+
+        sheet.columns = sheetColumn;
+
+        sheetRow.forEach((x) => {
+            sheet.addRow(x);
+        });
+
+        workbook.xlsx.writeBuffer().then((content) => {
+            const link = document.createElement('a');
+            const blobData = new Blob([content], {
+                type: 'application/vnd.ms-excel;charset=utf-8;',
+            });
+            link.download = `${sheetName}.xlsx`;
+            link.href = URL.createObjectURL(blobData);
+            link.click();
+        });
+
+        this.loadingData.isShow = false;
+        this.$store.loading$.next(this.loadingData);
     }
 
     private async searchData(): Promise<void> {
@@ -470,6 +556,18 @@ export default class VuePageClass extends Vue {
     private closeDialog(): void {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = false;
+
+        switch (this.dialogData.message) {
+            case this.$i18n.Server_ERR_INVALID_PERMSSION:
+                this.$router.push(WebPath.Home);
+                break;
+            case this.$i18n.Server_ERR_INVALID_TOKEN:
+                ServerService.Logout();
+                this.$router.push(WebPath.Login);
+                break;
+            default:
+                break;
+        }
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }

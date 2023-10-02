@@ -1,5 +1,6 @@
 import { WebPath } from '@/config/path';
 import { LayoutNavModel } from '@/../components';
+import { EUserRole } from '@/enums';
 
 /**
  *
@@ -41,6 +42,7 @@ export const NavSystemAdministratorListOriginal: LayoutNavModel.IList[] = [
         href: WebPath.CourseList,
         isLock: true,
         exactPath: true,
+        auth: [EUserRole.Administrator, EUserRole.Manager],
     },
     {
         title: undefined,
@@ -48,12 +50,15 @@ export const NavSystemAdministratorListOriginal: LayoutNavModel.IList[] = [
         href: WebPath.LocationList,
         isLock: true,
         exactPath: true,
+        auth: [EUserRole.Administrator, EUserRole.Manager],
     },
     {
         title: undefined,
         titleI18nKey: 'Router_/w-user-management',
         href: WebPath.UserList,
+        isLock: true,
         exactPath: true,
+        auth: [EUserRole.Administrator],
     },
     //#endregion
 ];

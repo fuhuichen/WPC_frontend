@@ -667,6 +667,18 @@ export default class VuePageClass extends Vue {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = false;
 
+        switch (this.dialogData.message) {
+            case this.$i18n.Server_ERR_INVALID_PERMSSION:
+                this.$router.push(WebPath.Home);
+                break;
+            case this.$i18n.Server_ERR_INVALID_TOKEN:
+                ServerService.Logout();
+                this.$router.push(WebPath.Login);
+                break;
+            default:
+                break;
+        }
+
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }
 

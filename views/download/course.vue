@@ -114,6 +114,7 @@ import { Vue, Component } from 'vue-property-decorator';
 //#region Module
 import * as Rx from 'rxjs';
 import * as RxOperator from 'rxjs/operators';
+import ExcelJs from 'exceljs';
 //#endregion
 
 //#region Framework
@@ -283,6 +284,38 @@ export default class VuePageClass extends Vue {
 
         return tempTableApiParam;
     }
+
+    private get tableExcelApiParam(): Model.ITableApiParam {
+        let tableExcelApiParam: Model.ITableApiParam = {};
+
+        tableExcelApiParam.paging = { page: this.tableItem.paging.page, pageSize: 1000000 };
+
+        if (this.tableItem.sorting?.orderEnum !== TableModel.ESorting.none) {
+            tableExcelApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
+        }
+
+        const { bgName, sectorName, courseName }: Model.IFilterData = this.filterData;
+
+        if (!!bgName) {
+            tableExcelApiParam.bgName = bgName;
+        } else {
+            delete tableExcelApiParam.bgName;
+        }
+
+        if (!!sectorName) {
+            tableExcelApiParam.sectorName = sectorName;
+        } else {
+            delete tableExcelApiParam.sectorName;
+        }
+
+        if (!!courseName) {
+            tableExcelApiParam.courseName = courseName.map((x) => x.key as string);
+        } else {
+            delete tableExcelApiParam.courseName;
+        }
+
+        return tableExcelApiParam;
+    }
     //#endregion
 
     //#region Watch
@@ -423,7 +456,65 @@ export default class VuePageClass extends Vue {
     //#endregion
 
     //#region Event search
-    private exportTable(): void {}
+    private async exportTable(): Promise<void> {
+        this.loadingData.isShow = true;
+        this.$store.loading$.next(this.loadingData);
+
+        const sheetName = this.$i18n['Router_/w-download/course'];
+        const workbook = new ExcelJs.Workbook();
+        const sheet = workbook.addWorksheet(sheetName);
+
+        this.tableItem.columns;
+
+        const sheetColumn = this.tableItem.columns.map((x: any) => ({
+            header: x.title,
+            key: x?.key ?? 'no',
+        }));
+
+        let apiResult = await ServerService.GetCourseActionList(this.tableExcelApiParam);
+        let responseData: ServerNamespace.IServerResultError = undefined;
+
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
+            this.handleServerResponse([responseData]);
+            this.loadingData.isShow = false;
+
+            return null;
+        }
+
+        const sheetRow = apiResult.result.results.rows.map((x, index) => ({
+            no: index + 1,
+            bgName: x?.bgName ?? '',
+            sectorName: x?.sectorName ?? '',
+            courseName: x?.courseName ?? '',
+            name: `${x?.firstName ?? ''} ${x?.lastName ?? ''}`,
+            email: x?.email ?? '',
+            timestamp: this.resolveDate(x?.timestamp ?? ''),
+        }));
+
+        sheet.columns = sheetColumn;
+
+        sheetRow.forEach((x) => {
+            sheet.addRow(x);
+        });
+
+        workbook.xlsx.writeBuffer().then((content) => {
+            const link = document.createElement('a');
+            const blobData = new Blob([content], {
+                type: 'application/vnd.ms-excel;charset=utf-8;',
+            });
+            link.download = `${sheetName}.xlsx`;
+            link.href = URL.createObjectURL(blobData);
+            link.click();
+        });
+
+        this.loadingData.isShow = false;
+        this.$store.loading$.next(this.loadingData);
+    }
 
     private async searchData(): Promise<void> {
         this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
@@ -465,6 +556,18 @@ export default class VuePageClass extends Vue {
     private closeDialog(): void {
         this.dialogData.isShow = false;
         this.dialogData.isDoNextStep = false;
+
+        switch (this.dialogData.message) {
+            case this.$i18n.Server_ERR_INVALID_PERMSSION:
+                this.$router.push(WebPath.Home);
+                break;
+            case this.$i18n.Server_ERR_INVALID_TOKEN:
+                ServerService.Logout();
+                this.$router.push(WebPath.Login);
+                break;
+            default:
+                break;
+        }
 
         this.dialogData = JSON.parse(JSON.stringify(this.dialogDataOriginal));
     }

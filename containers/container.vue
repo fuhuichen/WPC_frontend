@@ -254,13 +254,24 @@ export default class VuePageClass extends Vue {
         if (!navLists) {
             isDeepZero = false;
 
-            if (
-                this.user.user.roles.some((n) => n.name === EUserRole.Administrator) ||
-                this.user.user.roles.some((n) => n.name === EUserRole.Manager)
-            ) {
+            if (this.user.user.roles.some((n) => n.name === EUserRole.Administrator)) {
                 navLists = JSON.parse(JSON.stringify(NavSystemAdministratorListOriginal));
+            } else if (this.user.user.roles.some((n) => n.name === EUserRole.Manager)) {
+                navLists = JSON.parse(JSON.stringify(NavSystemAdministratorListOriginal)).filter((item) => {
+                    if (!!item.auth) {
+                        return item.auth.includes(EUserRole.Manager);
+                    } else {
+                        return item;
+                    }
+                });
             } else if (this.user.user.roles.some((n) => n.name === EUserRole.User)) {
-                navLists = JSON.parse(JSON.stringify(NavSystemAdministratorListOriginal)).filter((item) => !item.isLock);
+                navLists = JSON.parse(JSON.stringify(NavSystemAdministratorListOriginal)).filter((item) => {
+                    if (!!item.auth) {
+                        return item.auth.includes(EUserRole.User);
+                    } else {
+                        return item;
+                    }
+                });
             } else {
                 console.error('user role not allow');
                 return null;

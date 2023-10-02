@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {},
   "dependencies": {
-    "@advantech/service-regex": "^1.6.4"
-  },
-  "devDependencies": {}
+    "@advantech/service-regex": "^1.6.4",
+    "exceljs": "^4.3.0"
+  }
 }
