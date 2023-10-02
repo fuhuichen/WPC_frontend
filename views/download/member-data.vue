@@ -372,7 +372,7 @@ export default class VuePageClass extends Vue {
     }
 
     private resolveDate(value) {
-        const date = DateTimeService.datetime2String(new Date(value), 'YYYY/MM/DD HH:mm:ss');
+        const date = DateTimeService.datetime2String(new Date(value * 1000), 'YYYY/MM/DD HH:mm:ss');
 
         return date;
     }
