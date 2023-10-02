@@ -707,6 +707,7 @@ export class ServerBase {
                 token: this._authorization,
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
+                keyword: datas.keyword,
             };
 
             let res = await this.BasePost('api/member/list', body, 'json');
@@ -721,11 +722,6 @@ export class ServerBase {
             }
 
             let result = res.result.rows;
-
-            if (!!datas.keyword) {
-                let keyword: string = datas.keyword.toLocaleLowerCase();
-                result = result.filter((x) => x.email.toLocaleLowerCase().indexOf(keyword) > -1);
-            }
 
             let response = {
                 paging: {
