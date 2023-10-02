@@ -211,7 +211,7 @@ export default class VuePageClass extends Vue {
             qrCodeList.push(item.qrCodeNumber);
         });
 
-        tableExcelApiParam.paging = { page: this.tableItem.paging.page, pageSize: this.tableItem.paging.pageSize };
+        tableExcelApiParam.paging = { page: this.tableItem.paging.page, pageSize: 1000000 };
 
         if (this.tableItem.sorting?.orderEnum !== TableModel.ESorting.none) {
             tableExcelApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
@@ -356,19 +356,6 @@ export default class VuePageClass extends Vue {
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);
-    }
-
-    private async searchData(): Promise<void> {
-        this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
-
-        for (let key in this.filterDataTemp) {
-            if (this.filterDataTemp[key] instanceof Date) {
-                this.filterData[key] = new Date(this.filterDataTemp[key]);
-            }
-        }
-
-        this.tableItem.paging.page = 1;
-        await this.tableReload();
     }
 
     private resolveDate(value) {
