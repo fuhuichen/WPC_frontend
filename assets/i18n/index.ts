@@ -488,6 +488,10 @@ export const I18n = {
         'en-US': 'Total WPC Point',
         'zh-TW': 'Total WPC Point',
     },
+    Download_Member_qty: {
+        'en-US': 'qty',
+        'zh-TW': 'qty',
+    },
     Download_Member_CourseName: {
         'en-US': 'Course Name',
         'zh-TW': 'Course Name',

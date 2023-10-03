@@ -263,10 +263,11 @@ export default class VuePageClass extends Vue {
             { type: 'field', title: this.$i18n.Download_Member_CheckTime, key: 'timestamp', useSlot: true },
             { type: 'field', title: this.$i18n.Download_Member_ActionType, key: 'type' },
             { type: 'field', title: this.$i18n.Download_Member_WPCPoint, key: 'point' },
-            { type: 'field', title: this.$i18n.Download_Member_TotalWPCPoint, key: 'totalWpcPoint' },
+            { type: 'field', title: this.$i18n.Download_Member_TotalWPCPoint, key: 'wpcPoints' },
+            { type: 'field', title: this.$i18n.Download_Member_qty, key: 'qty' },
+            { type: 'field', title: this.$i18n.Download_Member_ItemName, key: 'itemName' },
             { type: 'field', title: this.$i18n.Download_Member_CourseName, key: 'courseName' },
             { type: 'field', title: this.$i18n.Download_Member_SiteName, key: 'siteName' },
-            { type: 'field', title: this.$i18n.Download_Member_ItemName, key: 'itemName' },
         ];
     }
 

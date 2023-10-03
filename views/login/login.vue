@@ -92,7 +92,7 @@ export default class VuePageClass extends Vue {
         welcome: this.$i18n.View_Login_Welcome,
         title: this.$i18n.View_Login_Title,
         rememberMe: this.$i18n.View_Login_RememberMe,
-        forgotPassword: this.$i18n.View_Login_ForgotPassword,
+        forgotPassword: '',
         loginButtonText: this.$i18n.View_Login_LoginButtonText,
         accountPlaceholder: this.$i18n.View_Login_AccountPlaceholder,
         passwordPlaceholder: this.$i18n.View_Login_PasswordPlaceholder,

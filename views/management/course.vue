@@ -426,6 +426,7 @@ export default class VuePageClass extends Vue {
             { type: 'field', title: this.$i18n.Download_Course_BgName, key: 'bgName' },
             { type: 'field', title: this.$i18n.Download_Course_SectorName, key: 'sectorName' },
             { type: 'field', title: this.$i18n.Download_Course_CourseName, key: 'name' },
+            { type: 'field', title: this.$i18n.Management_Member_Point, key: 'point' },
             { type: 'field', title: this.$i18n.Common_Action, key: 'action', useSlot: true },
         ];
     }
