@@ -21,6 +21,8 @@
                         <template #timestamp="props"> {{ resolveDate(props.scope.timestamp) }} </template>
 
                         <template #name="props"> {{ props.scope.firstName }} {{ props.scope.lastName }} </template>
+
+                        <template #point="props"> {{ resolvePoint(props.scope) }} </template>
                     </AicsTable>
                 </AicsCardContainer>
             </div>
@@ -124,7 +126,7 @@ export default class VuePageClass extends Vue {
         paging: { pageSize: 10, page: 1, totalPages: 1, total: 0 },
 
         //非必填
-        sorting: { field: 'date', orderEnum: TableModel.ESorting.desc, order: 1 },
+        sorting: { field: 'timestamp', orderEnum: TableModel.ESorting.desc, order: 1 },
 
         showPaging: true,
         numberOfPerPage: [10, 25, 50, 100],
@@ -258,16 +260,16 @@ export default class VuePageClass extends Vue {
     private initTableColumns(): void {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'name', useSlot: true },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'email' },
-            { type: 'field', title: this.$i18n.Download_Member_CheckTime, key: 'timestamp', useSlot: true },
-            { type: 'field', title: this.$i18n.Download_Member_ActionType, key: 'type' },
-            { type: 'field', title: this.$i18n.Download_Member_WPCPoint, key: 'point' },
-            { type: 'field', title: this.$i18n.Download_Member_TotalWPCPoint, key: 'wpcPoints' },
-            { type: 'field', title: this.$i18n.Download_Member_qty, key: 'qty' },
-            { type: 'field', title: this.$i18n.Download_Member_ItemName, key: 'itemName' },
-            { type: 'field', title: this.$i18n.Download_Member_CourseName, key: 'courseName' },
-            { type: 'field', title: this.$i18n.Download_Member_SiteName, key: 'siteName' },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'name', useSlot: true, sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'email', sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_CheckTime, key: 'timestamp', useSlot: true, sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_ActionType, key: 'type', sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_WPCPoint, key: 'point', useSlot: true, sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_TotalWPCPoint, key: 'wpcPoints', sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_qty, key: 'qty', sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_ItemName, key: 'itemName', sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_CourseName, key: 'courseName, sort: true ' },
+            { type: 'field', title: this.$i18n.Download_Member_SiteName, key: 'siteName', sort: true },
         ];
     }
 
@@ -363,6 +365,14 @@ export default class VuePageClass extends Vue {
         const date = DateTimeService.datetime2String(new Date(value * 1000), 'YYYY/MM/DD HH:mm:ss');
 
         return date;
+    }
+
+    private resolvePoint(value) {
+        if (value.type === 'order') {
+            return value.qty * value.point * -1;
+        } else {
+            return value.point;
+        }
     }
     //#endregion
 

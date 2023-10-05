@@ -157,7 +157,7 @@ export default class VuePageClass extends Vue {
         paging: { pageSize: 10, page: 1, totalPages: 1, total: 0 },
 
         //非必填
-        sorting: { field: 'date', orderEnum: TableModel.ESorting.desc, order: 1 },
+        sorting: { field: 'qrCodeNumber', orderEnum: TableModel.ESorting.desc, order: 1 },
 
         showPaging: true,
         numberOfPerPage: [10, 25, 50, 100],
@@ -285,9 +285,9 @@ export default class VuePageClass extends Vue {
         this.tableItem.columns = [
             { type: 'checkbox', optionKey: 'qrCodeNumber', valueKey: 'isChecked', isDisabledKey: 'isDisabled' },
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Member_QRCodeNumber, key: 'qrCodeNumber' },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'name', useSlot: true },
-            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'email' },
+            { type: 'field', title: this.$i18n.Download_Member_QRCodeNumber, key: 'qrCodeNumber', sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceName, key: 'name', useSlot: true, sort: true },
+            { type: 'field', title: this.$i18n.Download_Member_AttendenceEmail, key: 'email', sort: true },
         ];
     }
 

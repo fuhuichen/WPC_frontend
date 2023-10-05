@@ -220,7 +220,7 @@ export default class VuePageClass extends Vue {
         paging: { pageSize: 10, page: 1, totalPages: 1, total: 0 },
 
         //非必填
-        sorting: { field: '', orderEnum: TableModel.ESorting.none, order: 1 },
+        sorting: { field: 'locationName', orderEnum: TableModel.ESorting.desc, order: 1 },
 
         showPaging: true,
         numberOfPerPage: [10, 25, 50, 100],
@@ -370,10 +370,10 @@ export default class VuePageClass extends Vue {
     private initTableColumns(): void {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
-            { type: 'field', title: this.$i18n.Download_Location_LocationName, key: 'locationName' },
-            { type: 'field', title: this.$i18n.Download_Location_Type, key: 'type' },
-            { type: 'field', title: this.$i18n.Download_Location_SiteName, key: 'name' },
-            { type: 'field', title: this.$i18n.Management_Member_Point, key: 'point' },
+            { type: 'field', title: this.$i18n.Download_Location_LocationName, key: 'locationName', sort: true },
+            { type: 'field', title: this.$i18n.Download_Location_Type, key: 'type', sort: true },
+            { type: 'field', title: this.$i18n.Download_Location_SiteName, key: 'name', sort: true },
+            { type: 'field', title: this.$i18n.Management_Member_Point, key: 'point', sort: true },
             { type: 'field', title: this.$i18n.Common_Action, key: 'action', useSlot: true },
         ];
     }

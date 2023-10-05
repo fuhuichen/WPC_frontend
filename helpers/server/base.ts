@@ -198,9 +198,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async GetUserList(): Promise<any>;
     public async GetUserList(datas: ServerNameSpace.IDataList): Promise<any>;
     public async GetUserList(datas?: ServerNameSpace.IDataList): Promise<any> {
@@ -208,6 +205,12 @@ export class ServerBase {
             let body: object = {
                 token: this._authorization,
             };
+
+            // sorting
+            if (!!datas.sorting) {
+                body['orderField'] = datas.sorting.field;
+                body['orderDirection'] = datas.sorting.order === 1 ? 'desc' : 'asc';
+            }
 
             let result: ServerNameSpace.IUserListRResponse[] = [];
 
@@ -253,9 +256,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async UpdateUser(datas): Promise<any> {
         try {
             let body: object = {
@@ -283,9 +283,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async CreateUser(datas): Promise<any> {
         try {
             let body: object = {
@@ -313,9 +310,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async DeleteUser(datas): Promise<any> {
         try {
             let body: object = {
@@ -340,14 +334,17 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async GetLocationList(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
             };
+
+            // sorting
+            if (!!datas.sorting) {
+                body['orderField'] = datas.sorting.field;
+                body['orderDirection'] = datas.sorting.order === 1 ? 'desc' : 'asc';
+            }
 
             let res = await this.BasePost('api/site/list', body, 'json');
 
@@ -391,9 +388,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async UpdateLocation(datas): Promise<any> {
         try {
             let body: object = {
@@ -422,9 +416,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async CreateLocation(datas): Promise<any> {
         try {
             let body: object = {
@@ -452,9 +443,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async DeleteLocation(datas): Promise<any> {
         try {
             let body: object = {
@@ -479,14 +467,17 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async GetCourseList(datas): Promise<any> {
         try {
             let body: object = {
                 token: this._authorization,
             };
+
+            // sorting
+            if (!!datas.sorting) {
+                body['orderField'] = datas.sorting.field;
+                body['orderDirection'] = datas.sorting.order === 1 ? 'desc' : 'asc';
+            }
 
             let res = await this.BasePost('api/course/list', body, 'json');
 
@@ -560,9 +551,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async CreateCourse(datas): Promise<any> {
         try {
             let body: object = {
@@ -592,9 +580,6 @@ export class ServerBase {
         }
     }
 
-    /**
-     *
-     */
     public async DeleteCourse(datas): Promise<any> {
         try {
             let body: object = {
@@ -627,6 +612,12 @@ export class ServerBase {
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
             };
+
+            // sorting
+            if (!!datas.sorting) {
+                body['orderField'] = datas.sorting.field;
+                body['orderDirection'] = datas.sorting.order === 1 ? 'desc' : 'asc';
+            }
 
             let res = await this.BasePost('api/course/actionList', body, 'json');
 
@@ -670,6 +661,12 @@ export class ServerBase {
                 pageSize: datas.paging.pageSize,
             };
 
+            // sorting
+            if (!!datas.sorting) {
+                body['orderField'] = datas.sorting.field;
+                body['orderDirection'] = datas.sorting.order === 1 ? 'desc' : 'asc';
+            }
+
             let res = await this.BasePost('api/site/actionList', body, 'json');
 
             if (res.result.errorcode !== 0) {
@@ -709,6 +706,12 @@ export class ServerBase {
                 pageSize: datas.paging.pageSize,
                 keyword: datas.keyword,
             };
+
+            // sorting
+            if (!!datas.sorting) {
+                body['orderField'] = datas.sorting.field;
+                body['orderDirection'] = datas.sorting.order === 1 ? 'desc' : 'asc';
+            }
 
             let res = await this.BasePost('api/member/list', body, 'json');
 
@@ -768,6 +771,7 @@ export class ServerBase {
             throw e;
         }
     }
+
     public async GetMemberActionList(datas): Promise<any> {
         try {
             let body: object = {
@@ -776,6 +780,12 @@ export class ServerBase {
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
             };
+
+            // sorting
+            if (!!datas.sorting) {
+                body['orderField'] = datas.sorting.field;
+                body['orderDirection'] = datas.sorting.order === 1 ? 'desc' : 'asc';
+            }
 
             let res = await this.BasePost('api/member/actionList', body, 'json');
 
