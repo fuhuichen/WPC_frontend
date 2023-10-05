@@ -355,7 +355,7 @@ export default class VuePageClass extends Vue {
         this.tableItem.columns = [
             { type: 'index', title: this.$i18n.Common_NO },
             { type: 'field', title: this.$i18n.Download_Location_LocationName, key: 'locationName' },
-            { type: 'field', title: this.$i18n.Download_Location_Type, key: 'type' },
+            { type: 'field', title: this.$i18n.Download_Location_SiteType, key: 'siteType' },
             { type: 'field', title: this.$i18n.Download_Location_SiteName, key: 'siteName' },
             { type: 'field', title: this.$i18n.Download_Course_AttendenceName, key: 'name', useSlot: true },
             { type: 'field', title: this.$i18n.Download_Course_AttendenceEmail, key: 'email' },

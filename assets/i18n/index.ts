@@ -437,6 +437,10 @@ export const I18n = {
         'en-US': 'Type',
         'zh-TW': 'Type',
     },
+    Download_Location_SiteType: {
+        'en-US': 'Site type',
+        'zh-TW': 'Site type',
+    },
     Download_Location_SiteName: {
         'en-US': 'Site Name',
         'zh-TW': 'Site Name',
