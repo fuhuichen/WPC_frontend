@@ -204,6 +204,8 @@ export class ServerBase {
         try {
             let body: object = {
                 token: this._authorization,
+                pageIndex: datas.paging.page,
+                pageSize: datas.paging.pageSize,
             };
 
             // sorting
@@ -227,23 +229,12 @@ export class ServerBase {
 
             result = res.result.rows;
 
-            // pagination
-            let pageSize: number = datas.paging?.pageSize;
-            let total: number = result.length;
-            let totalPages: number = Math.ceil(total / pageSize);
-            let page: number = datas.paging.page;
-            if (page > totalPages) {
-                page = totalPages || 1;
-            }
-
-            result = result.slice((page - 1) * pageSize, page * pageSize);
-
             let response: ServerNameSpace.IPagingResponse<ServerNameSpace.IUserListRResponse> = {
                 paging: {
-                    total: total,
-                    totalPages: totalPages,
-                    page: page,
-                    pageSize: pageSize,
+                    total: res.result.rows.length,
+                    totalPages: res.result.totalPageNum,
+                    page: datas.paging.page,
+                    pageSize: datas.paging.pageSize,
                 },
                 results: result,
             };
@@ -338,6 +329,8 @@ export class ServerBase {
         try {
             let body: object = {
                 token: this._authorization,
+                pageIndex: datas.paging.page,
+                pageSize: datas.paging.pageSize,
             };
 
             // sorting
@@ -359,23 +352,12 @@ export class ServerBase {
 
             let result = res.result.rows;
 
-            // pagination
-            let pageSize: number = datas.paging?.pageSize;
-            let total: number = result.length;
-            let totalPages: number = Math.ceil(total / pageSize);
-            let page: number = datas.paging.page;
-            if (page > totalPages) {
-                page = totalPages || 1;
-            }
-
-            result = result.slice((page - 1) * pageSize, page * pageSize);
-
             let response = {
                 paging: {
-                    total: total,
-                    totalPages: totalPages,
-                    page: page,
-                    pageSize: pageSize,
+                    total: res.result.rows.length,
+                    totalPages: res.result.totalPageNum,
+                    page: datas.paging.page,
+                    pageSize: datas.paging.pageSize,
                 },
                 results: { rows: result, locationList: res.result.locationList, typeList: res.result.typeList },
             };
@@ -471,6 +453,8 @@ export class ServerBase {
         try {
             let body: object = {
                 token: this._authorization,
+                pageIndex: datas.paging.page,
+                pageSize: datas.paging.pageSize,
             };
 
             // sorting
@@ -492,23 +476,12 @@ export class ServerBase {
 
             let result = res.result.rows;
 
-            // pagination
-            let pageSize: number = datas.paging?.pageSize;
-            let total: number = result.length;
-            let totalPages: number = Math.ceil(total / pageSize);
-            let page: number = datas.paging.page;
-            if (page > totalPages) {
-                page = totalPages || 1;
-            }
-
-            result = result.slice((page - 1) * pageSize, page * pageSize);
-
             let response = {
                 paging: {
-                    total: total,
-                    totalPages: totalPages,
-                    page: page,
-                    pageSize: pageSize,
+                    total: res.result.rows.length,
+                    totalPages: res.result.totalPageNum,
+                    page: datas.paging.page,
+                    pageSize: datas.paging.pageSize,
                 },
                 results: { rows: result, bgList: res.result.bgList, sectorList: res.result.sectorList },
             };

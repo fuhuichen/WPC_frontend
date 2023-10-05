@@ -369,7 +369,11 @@ export default class VuePageClass extends Vue {
 
     private resolvePoint(value) {
         if (value.type === 'order') {
-            return value.qty * value.point * -1;
+            if (value.point && value.qty) {
+                return value.qty * value.point * -1;
+            } else {
+                return value.point;
+            }
         } else {
             return value.point;
         }
