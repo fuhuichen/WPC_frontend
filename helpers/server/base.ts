@@ -584,6 +584,8 @@ export class ServerBase {
                 courseIdList: datas?.courseName.length === 0 ? null : datas?.courseName,
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
+                startTime: datas.startTime,
+                endTime: datas.endTime,
             };
 
             // sorting
@@ -632,6 +634,8 @@ export class ServerBase {
                 siteIdList: datas?.site.length === 0 ? null : datas?.site,
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
+                startTime: datas.startTime,
+                endTime: datas.endTime,
             };
 
             // sorting

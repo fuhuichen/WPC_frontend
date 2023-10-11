@@ -77,6 +77,8 @@ export interface IDetectiveRecordsRequest extends IDataList {
     sectorName?: object;
     site?: string[];
     courseName?: string[];
+    startTime?: number;
+    endTime?: number;
 }
 
 /**

@@ -23,6 +23,7 @@ export namespace ModelsLocation {
         location: DropdownModel.IOption[];
         type: DropdownModel.IOption[];
         site: DropdownModel.IOption[];
+        dateTime: Date[];
     }
     //#endregion
 }

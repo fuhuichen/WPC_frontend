@@ -78,6 +78,14 @@ export const I18n = {
         'en-US': 'Email format is incorrect',
         'zh-TW': '不符合Email格式',
     },
+    Common_DateTimeSearch: {
+        'en-US': 'Date',
+        'zh-TW': '查詢日期',
+    },
+    Common_DateTimeSearchGreatThanSevenDays_Error: {
+        'en-US': 'Date range can only be within 7 days',
+        'zh-TW': '可查詢區間範圍為七天內',
+    },
     //#endregion
 
     //#region Form

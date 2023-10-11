@@ -23,6 +23,7 @@ export namespace ModelsCourse {
         bgName: DropdownModel.IOption[];
         sectorName: DropdownModel.IOption[];
         courseName: DropdownModel.IOption[];
+        dateTime: Date[];
     }
     //#endregion
 }

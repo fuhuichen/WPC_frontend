@@ -58,6 +58,18 @@
                             />
                         </div>
 
+                        <div class="row-3">
+                            <AicsTextLabel :text="$i18n.Common_DateTimeSearch" />
+
+                            <AicsInputDatetime
+                                size="14"
+                                variant="grayscale-primary"
+                                v-model="filterDataTemp.dateTime"
+                                mode="outline"
+                                :config="config"
+                            />
+                        </div>
+
                         <div>
                             <AicsTextLabel text="" />
 
@@ -147,6 +159,7 @@ import {
     AicsImageSingle,
     AicsDropdown,
 } from '@/../components';
+import { warn } from 'vue-class-component/lib/util';
 //#endregion
 
 //#region Components Src
@@ -203,6 +216,7 @@ export default class VuePageClass extends Vue {
         bgName: [],
         sectorName: [],
         courseName: [],
+        dateTime: [],
     };
     private filterData: Model.IFilterData = { ...this.filterDataOriginal };
     private filterDataTemp: Model.IFilterData = { ...this.filterDataOriginal };
@@ -211,6 +225,13 @@ export default class VuePageClass extends Vue {
         bgName: [],
         sectorName: [],
         courseName: [],
+        dateTime: [],
+    };
+
+    private config: InputDatetimeModel.IConfig = {
+        type: 'date-range',
+        format: InputDatetimeModel.EDatetimeFormat.date_slash_YYYYMMDD,
+        placeholder: this.$i18n.Common_DateTimeSearchGreatThanSevenDays_Error,
     };
 
     private pagingI18n: DropdownModel.IPagingI18n = {
@@ -262,7 +283,7 @@ export default class VuePageClass extends Vue {
             tempTableApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
         }
 
-        const { bgName, sectorName, courseName }: Model.IFilterData = this.filterData;
+        const { bgName, sectorName, courseName, dateTime }: Model.IFilterData = this.filterData;
 
         if (!!bgName) {
             tempTableApiParam.bgName = bgName;
@@ -282,6 +303,18 @@ export default class VuePageClass extends Vue {
             delete tempTableApiParam.courseName;
         }
 
+        if (dateTime.length > 0) {
+            const endYear = dateTime[1].getFullYear();
+            const endMonth = dateTime[1].getMonth() + 1;
+            const endDate = dateTime[1].getDate();
+
+            tempTableApiParam.startTime = dateTime[0].getTime() / 1000;
+            tempTableApiParam.endTime = new Date(`${endYear}/${endMonth}/${endDate} 23:59:59`).getTime() / 1000;
+        } else {
+            delete tempTableApiParam.startTime;
+            delete tempTableApiParam.endTime;
+        }
+
         return tempTableApiParam;
     }
 
@@ -294,7 +327,7 @@ export default class VuePageClass extends Vue {
             tableExcelApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
         }
 
-        const { bgName, sectorName, courseName }: Model.IFilterData = this.filterData;
+        const { bgName, sectorName, courseName, dateTime }: Model.IFilterData = this.filterData;
 
         if (!!bgName) {
             tableExcelApiParam.bgName = bgName;
@@ -312,6 +345,18 @@ export default class VuePageClass extends Vue {
             tableExcelApiParam.courseName = courseName.map((x) => x.key as string);
         } else {
             delete tableExcelApiParam.courseName;
+        }
+
+        if (dateTime.length > 0) {
+            const endYear = dateTime[1].getFullYear();
+            const endMonth = dateTime[1].getMonth() + 1;
+            const endDate = dateTime[1].getDate();
+
+            tableExcelApiParam.startTime = dateTime[0].getTime() / 1000;
+            tableExcelApiParam.endTime = new Date(`${endYear}/${endMonth}/${endDate} 23:59:59`).getTime() / 1000;
+        } else {
+            delete tableExcelApiParam.startTime;
+            delete tableExcelApiParam.endTime;
         }
 
         return tableExcelApiParam;
@@ -519,11 +564,24 @@ export default class VuePageClass extends Vue {
     private async searchData(): Promise<void> {
         this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
 
-        for (let key in this.filterDataTemp) {
-            if (this.filterDataTemp[key] instanceof Date) {
-                this.filterData[key] = new Date(this.filterDataTemp[key]);
+        if (this.filterDataTemp['dateTime'].length > 0) {
+            const startDate = this.filterDataTemp['dateTime'][0];
+            const endDate = this.filterDataTemp['dateTime'][1];
+
+            const oneWeek = 6 * 24 * 60 * 60 * 1000;
+
+            const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
+
+            if (timeDiff > oneWeek) {
+                this.dialogData.isShow = true;
+                this.dialogData.message = this.$i18n.Common_DateTimeSearchGreatThanSevenDays_Error;
+                this.dialogData.showCancelButton = false;
+
+                return null;
             }
         }
+
+        this.filterData['dateTime'] = [...this.filterDataTemp['dateTime']];
 
         this.tableItem.paging.page = 1;
         await this.tableReload();
