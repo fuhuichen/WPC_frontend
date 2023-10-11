@@ -717,6 +717,7 @@ export default class VuePageClass extends Vue {
             this.handleServerResponse([responseData]);
 
             this.loadingData.isShow = false;
+            this.$store.loading$.next(this.loadingData);
 
             return null;
         }
