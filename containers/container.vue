@@ -35,9 +35,9 @@
         >
         </AicsDialog>
 
-        <!-- <AicsLoadingCircle :isShow="loadingData.isShow" :isMaskNav="isMaskNav" :isFullScreen="isFullScreen" />
+        <AicsLoadingCircle :isShow="loadingData.isShow" :isMaskNav="isMaskNav" :isFullScreen="isFullScreen" />
 
-        <AicsNotificationToast v-model="notificationToastData.notifications" :duration="notificationToastData.duration" /> -->
+        <AicsNotificationToast v-model="notificationToastData.notifications" :duration="notificationToastData.duration" />
     </div>
 </template>
 

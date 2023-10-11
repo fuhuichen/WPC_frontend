@@ -562,29 +562,36 @@ export default class VuePageClass extends Vue {
     }
 
     private async searchData(): Promise<void> {
-        this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+        if (!!this.filterDataTemp['dateTime']) {
+            if (this.filterDataTemp['dateTime'].length > 0) {
+                const startDate = this.filterDataTemp['dateTime'][0];
+                const endDate = this.filterDataTemp['dateTime'][1];
 
-        if (this.filterDataTemp['dateTime'].length > 0) {
-            const startDate = this.filterDataTemp['dateTime'][0];
-            const endDate = this.filterDataTemp['dateTime'][1];
+                const oneWeek = 6 * 24 * 60 * 60 * 1000;
 
-            const oneWeek = 6 * 24 * 60 * 60 * 1000;
+                const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
 
-            const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
-
-            if (timeDiff > oneWeek) {
-                this.dialogData.isShow = true;
-                this.dialogData.message = this.$i18n.Common_DateTimeSearchGreatThanSevenDays_Error;
-                this.dialogData.showCancelButton = false;
-
-                return null;
+                if (timeDiff > oneWeek) {
+                    this.dialogData.isShow = true;
+                    this.dialogData.message = this.$i18n.Common_DateTimeSearchGreatThanSevenDays_Error;
+                    this.dialogData.showCancelButton = false;
+                } else {
+                    this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+                    this.filterData['dateTime'] = [...this.filterDataTemp['dateTime']];
+                    this.tableItem.paging.page = 1;
+                    await this.tableReload();
+                }
+            } else {
+                this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+                this.tableItem.paging.page = 1;
+                await this.tableReload();
             }
+        } else {
+            this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+            this.filterData['dateTime'] = [];
+            this.tableItem.paging.page = 1;
+            await this.tableReload();
         }
-
-        this.filterData['dateTime'] = [...this.filterDataTemp['dateTime']];
-
-        this.tableItem.paging.page = 1;
-        await this.tableReload();
     }
     //#endregion
 
