@@ -8,7 +8,7 @@
             <div class="page">
                 <div class="pb-2">
                     <div class="page--filter-line1">
-                        <div class="row-3">
+                        <div class="row-2">
                             <AicsTextLabel :text="$i18n.Download_Course_BgName" />
 
                             <AicsDropdown
@@ -24,7 +24,7 @@
                             />
                         </div>
 
-                        <div class="row-3">
+                        <div class="row-2">
                             <AicsTextLabel :text="$i18n.Download_Course_SectorName" />
 
                             <AicsDropdown
@@ -40,7 +40,7 @@
                             />
                         </div>
 
-                        <div class="row-3">
+                        <div class="row-2">
                             <AicsTextLabel :text="$i18n.Download_Course_CourseName" />
 
                             <AicsDropdown
@@ -65,6 +65,7 @@
                                 size="14"
                                 variant="grayscale-primary"
                                 v-model="filterDataTemp.dateTime"
+                                :isWidth100Percent="true"
                                 mode="outline"
                                 :config="config"
                             />
