@@ -392,6 +392,7 @@ export default class VuePageClass extends Vue {
             { type: 'index', title: this.$i18n.Common_NO },
             { type: 'field', title: this.$i18n.Management_Member_Name, key: 'name', sort: true },
             { type: 'field', title: this.$i18n.Management_Member_Email, key: 'email', sort: true },
+            { type: 'field', title: this.$i18n.Management_Member_Type, key: 'type', sort: true },
             { type: 'field', title: this.$i18n.Management_Member_Note, key: 'note', sort: true },
             { type: 'field', title: this.$i18n.Common_Action, key: 'action', useSlot: true },
         ];
