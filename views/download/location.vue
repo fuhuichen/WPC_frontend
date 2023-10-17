@@ -51,7 +51,7 @@
                                 :multiple="true"
                                 :allowEmpty="true"
                                 :closeOnSelect="false"
-                                :options="filterOption.site"
+                                :options="siteOptions"
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Location_SiteName"
@@ -212,19 +212,20 @@ export default class VuePageClass extends Vue {
         action: EPageAction.create,
     };
 
-    private filterDataOriginal: Model.IFilterData = {
-        location: [],
-        type: [],
+    private site = [];
+
+    private filterDataOriginal = {
+        location: { key: '', value: '' },
+        type: { key: '', value: '' },
         site: [],
         dateTime: [],
     };
-    private filterData: Model.IFilterData = { ...this.filterDataOriginal };
-    private filterDataTemp: Model.IFilterData = { ...this.filterDataOriginal };
+    private filterData = { ...this.filterDataOriginal };
+    private filterDataTemp = { ...this.filterDataOriginal };
 
     private filterOption: Model.IFilterData = {
         location: [],
         type: [],
-        site: [],
         dateTime: [],
     };
 
@@ -283,7 +284,7 @@ export default class VuePageClass extends Vue {
             tempTableApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
         }
 
-        const { location, type, site, dateTime }: Model.IFilterData = this.filterData;
+        const { location, type, site, dateTime } = this.filterData;
 
         if (!!location) {
             tempTableApiParam.location = location;
@@ -327,7 +328,7 @@ export default class VuePageClass extends Vue {
             tableExcelApiParam.sorting = { field: this.tableItem.sorting?.field, order: this.tableItem.sorting?.order };
         }
 
-        const { location, type, site, dateTime }: Model.IFilterData = this.filterData;
+        const { location, type, site, dateTime } = this.filterData;
 
         if (!!location) {
             tableExcelApiParam.location = location;
@@ -360,6 +361,33 @@ export default class VuePageClass extends Vue {
         }
 
         return tableExcelApiParam;
+    }
+
+    private get siteOptions(): any {
+        return this.site
+            .filter((x) => {
+                if (!this.filterDataTemp.location && !this.filterDataTemp.type) {
+                    return x;
+                }
+
+                if (!!this.filterDataTemp.location && !!this.filterDataTemp.type) {
+                    return (
+                        x.locationName.includes((this.filterDataTemp.location as any).key) && x.type.includes((this.filterDataTemp.type as any).key)
+                    );
+                }
+
+                if (!!this.filterDataTemp.location) {
+                    return x.locationName.includes((this.filterDataTemp.location as any).key);
+                }
+
+                if (!!this.filterDataTemp.type) {
+                    return x.type.includes((this.filterDataTemp.type as any).key);
+                }
+            })
+            .map((x) => ({
+                key: x.siteId,
+                value: x.name,
+            }));
     }
     //#endregion
 
@@ -448,7 +476,6 @@ export default class VuePageClass extends Vue {
 
         const locationOption = [];
         const typeOption = [];
-        const siteOption = [];
         locationList.forEach((x) => {
             let item = {
                 key: x,
@@ -467,18 +494,10 @@ export default class VuePageClass extends Vue {
             typeOption.push(item);
         });
 
-        rows.forEach((x) => {
-            let item = {
-                key: x.siteId,
-                value: x.name,
-            };
-
-            siteOption.push(item);
-        });
-
         this.filterOption.location = locationOption;
         this.filterOption.type = typeOption;
-        this.filterOption.site = siteOption;
+
+        this.site = rows;
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);

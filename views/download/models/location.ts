@@ -22,7 +22,6 @@ export namespace ModelsLocation {
     export interface IFilterData {
         location: DropdownModel.IOption[];
         type: DropdownModel.IOption[];
-        site: DropdownModel.IOption[];
         dateTime: Date[];
     }
     //#endregion
