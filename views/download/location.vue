@@ -555,6 +555,7 @@ export default class VuePageClass extends Vue {
             locationName: x?.locationName ?? '',
             type: x?.type ?? '',
             siteName: x?.siteName ?? '',
+            siteType: x?.siteType ?? '',
             name: `${x?.firstName ?? ''} ${x?.lastName ?? ''}`,
             email: x?.email ?? '',
             timestamp: this.resolveDate(x?.timestamp ?? ''),
