@@ -334,11 +334,12 @@ export default class VuePageClass extends Vue {
             email: x?.email ?? '',
             timestamp: this.resolveDate(x?.timestamp ?? ''),
             type: x?.type ?? '',
-            point: x?.point ?? '',
-            totalWpcPoint: x?.totalWpcPoint ?? '',
+            point: this.resolvePoint(x),
+            wpcPoints: x?.wpcPoints ?? '',
+            qty: x?.qty ?? '',
+            itemName: x?.itemName ?? '',
             courseName: x?.courseName ?? '',
             siteName: x?.siteName ?? '',
-            itemName: x?.itemName ?? '',
         }));
 
         sheet.columns = sheetColumn;
