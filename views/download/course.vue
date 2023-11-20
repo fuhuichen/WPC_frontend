@@ -21,6 +21,7 @@
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Course_BgName"
+                                @change="inputOptions"
                             />
                         </div>
 
@@ -37,6 +38,7 @@
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Course_SectorName"
+                                @change="inputOptions"
                             />
                         </div>
 
@@ -560,6 +562,76 @@ export default class VuePageClass extends Vue {
 
         this.loadingData.isShow = false;
         this.$store.loading$.next(this.loadingData);
+    }
+
+    private async inputOptions(): Promise<void> {
+        let payload = {
+            bgName: this.filterDataTemp.bgName,
+            sectorName: this.filterDataTemp.sectorName,
+            paging: { page: this.tableItem.paging.page, pageSize: this.tableItem.paging.pageSize },
+        };
+
+        this.changeOption(payload);
+    }
+
+    private async changeOption(payload): Promise<void> {
+        let apiResult = await ServerService.GetCourseList(payload);
+        let responseData: ServerNamespace.IServerResultError = undefined;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
+            this.handleServerResponse([responseData]);
+
+            this.loadingData.isShow = false;
+
+            return null;
+        }
+
+        if (!!apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = apiResult.result.error_msg;
+            this.dialogData.showCancelButton = false;
+
+            return;
+        }
+        const { bgList, sectorList, rows } = apiResult.result.results;
+
+        const bgNameList = [];
+        const sectorNameList = [];
+        const courseIdList = [];
+        bgList.forEach((x) => {
+            let item = {
+                key: x,
+                value: x,
+            };
+
+            bgNameList.push(item);
+        });
+
+        sectorList.forEach((x) => {
+            let item = {
+                key: x,
+                value: x,
+            };
+
+            sectorNameList.push(item);
+        });
+
+        rows.forEach((x) => {
+            let item = {
+                key: x.courseId,
+                value: x.name,
+            };
+
+            courseIdList.push(item);
+        });
+
+        this.filterOption.bgName = bgNameList;
+        this.filterOption.sectorName = sectorNameList;
+        this.filterOption.courseName = courseIdList;
     }
 
     private async searchData(): Promise<void> {

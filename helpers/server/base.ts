@@ -331,6 +331,8 @@ export class ServerBase {
                 token: this._authorization,
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
+                locationName: datas.location === null ? null : datas.location.key === '' ? null : datas.location.key,
+                type: datas.type === null ? null : datas.type.key === '' ? null : datas.type.key,
             };
 
             // sorting
@@ -455,6 +457,8 @@ export class ServerBase {
                 token: this._authorization,
                 pageIndex: datas.paging.page,
                 pageSize: datas.paging.pageSize,
+                bgName: datas.bgName === null ? null : datas.bgName.key === '' ? null : datas.bgName.key,
+                sectorName: datas.sectorName === null ? null : datas.sectorName.key === '' ? null : datas.sectorName.key,
             };
 
             // sorting

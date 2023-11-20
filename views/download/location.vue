@@ -21,6 +21,7 @@
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Location_LocationName"
+                                @change="inputOptions"
                             />
                         </div>
 
@@ -37,6 +38,7 @@
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Location_Type"
+                                @change="inputOptions"
                             />
                         </div>
 
@@ -503,6 +505,69 @@ export default class VuePageClass extends Vue {
         this.$store.loading$.next(this.loadingData);
 
         return true;
+    }
+
+    private async inputOptions(): Promise<void> {
+        let payload = {
+            location: this.filterDataTemp.location,
+            type: this.filterDataTemp.type,
+            paging: { page: this.tableItem.paging.page, pageSize: this.tableItem.paging.pageSize },
+        };
+
+        this.changeOption(payload);
+    }
+
+    private async changeOption(payload): Promise<void> {
+        let apiResult = await ServerService.GetLocationList(payload);
+
+        let responseData: ServerNamespace.IServerResultError = undefined;
+        if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            responseData = {
+                statusCode: apiResult.result.errorcode,
+                message: apiResult.result.error_msg,
+            };
+
+            this.handleServerResponse([responseData]);
+
+            this.loadingData.isShow = false;
+
+            return null;
+        }
+
+        if (!!apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
+            this.dialogData.isShow = true;
+            this.dialogData.message = apiResult.result.error_msg;
+            this.dialogData.showCancelButton = false;
+
+            return;
+        }
+        const { locationList, typeList, rows } = apiResult.result.results;
+
+        const locationOption = [];
+        const typeOption = [];
+        locationList.forEach((x) => {
+            let item = {
+                key: x,
+                value: x,
+            };
+
+            locationOption.push(item);
+        });
+
+        typeList.forEach((x) => {
+            let item = {
+                key: x,
+                value: x,
+            };
+
+            typeOption.push(item);
+        });
+
+        this.filterOption.location = locationOption;
+        this.filterOption.type = typeOption;
+        this.site = rows;
+
+        return;
     }
     //#endregion
     //#endregion
