@@ -424,7 +424,10 @@ export default class VuePageClass extends Vue {
         this.loadingData.isShow = true;
         this.$store.loading$.next(this.loadingData);
 
-        let apiResult = await ServerService.GetCourseList(this.tableApiParam);
+        let payload = JSON.parse(JSON.stringify(this.tableApiParam));
+        payload.paging = { page: null, pageSize: null };
+
+        let apiResult = await ServerService.GetCourseList(payload);
 
         let responseData: ServerNamespace.IServerResultError = undefined;
         if (apiResult.result.errorcode && apiResult.result.errorcode !== 0) {
@@ -568,7 +571,7 @@ export default class VuePageClass extends Vue {
         let payload = {
             bgName: this.filterDataTemp.bgName,
             sectorName: this.filterDataTemp.sectorName,
-            paging: { page: this.tableItem.paging.page, pageSize: this.tableItem.paging.pageSize },
+            paging: { page: null, pageSize: null },
         };
 
         this.changeOption(payload);
