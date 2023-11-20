@@ -21,7 +21,7 @@
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Course_BgName"
-                                @change="inputOptions"
+                                @change="inputOptions('bgName')"
                             />
                         </div>
 
@@ -38,7 +38,7 @@
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Course_SectorName"
-                                @change="inputOptions"
+                                @change="inputOptions('sectorName')"
                             />
                         </div>
 
@@ -567,12 +567,27 @@ export default class VuePageClass extends Vue {
         this.$store.loading$.next(this.loadingData);
     }
 
-    private async inputOptions(): Promise<void> {
-        let payload = {
-            bgName: this.filterDataTemp.bgName,
-            sectorName: this.filterDataTemp.sectorName,
-            paging: { page: null, pageSize: null },
-        };
+    private async inputOptions(name): Promise<void> {
+        let payload = {};
+
+        switch (name) {
+            case 'bgName':
+                this.filterDataTemp.sectorName = null;
+
+                payload = {
+                    bgName: this.filterDataTemp.bgName,
+                    sectorName: this.filterDataTemp.sectorName,
+                    paging: { page: null, pageSize: null },
+                };
+                break;
+            case 'sectorName':
+                payload = {
+                    bgName: this.filterDataTemp.bgName,
+                    sectorName: this.filterDataTemp.sectorName,
+                    paging: { page: null, pageSize: null },
+                };
+                break;
+        }
 
         this.changeOption(payload);
     }

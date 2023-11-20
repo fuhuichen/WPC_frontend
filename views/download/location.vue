@@ -21,7 +21,7 @@
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Location_LocationName"
-                                @change="inputOptions"
+                                @change="inputOptions('location')"
                             />
                         </div>
 
@@ -38,7 +38,7 @@
                                 :isWidth100Percent="true"
                                 :pagingI18n="pagingI18n"
                                 :placeholder="$i18n.Download_Location_Type"
-                                @change="inputOptions"
+                                @change="inputOptions('type')"
                             />
                         </div>
 
@@ -510,12 +510,26 @@ export default class VuePageClass extends Vue {
         return true;
     }
 
-    private async inputOptions(): Promise<void> {
-        let payload = {
-            location: this.filterDataTemp.location,
-            type: this.filterDataTemp.type,
-            paging: { page: this.tableItem.paging.page, pageSize: this.tableItem.paging.pageSize },
-        };
+    private async inputOptions(name): Promise<void> {
+        let payload = {};
+
+        switch (name) {
+            case 'location':
+                this.filterDataTemp.type = null;
+                payload = {
+                    location: this.filterDataTemp.location,
+                    type: this.filterDataTemp.type,
+                    paging: { page: this.tableItem.paging.page, pageSize: this.tableItem.paging.pageSize },
+                };
+                break;
+            case 'type':
+                payload = {
+                    location: this.filterDataTemp.location,
+                    type: this.filterDataTemp.type,
+                    paging: { page: this.tableItem.paging.page, pageSize: this.tableItem.paging.pageSize },
+                };
+                break;
+        }
 
         this.changeOption(payload);
     }
