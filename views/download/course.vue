@@ -668,17 +668,32 @@ export default class VuePageClass extends Vue {
                     this.dialogData.showCancelButton = false;
                 } else {
                     this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+
+                    if (this.filterData.courseName.length === 0) {
+                        this.filterData.courseName = this.filterOption.courseName;
+                    }
+
                     this.filterData['dateTime'] = [...this.filterDataTemp['dateTime']];
                     this.tableItem.paging.page = 1;
                     await this.tableReload();
                 }
             } else {
                 this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+
+                if (this.filterData.courseName.length === 0) {
+                    this.filterData.courseName = this.filterOption.courseName;
+                }
+
                 this.tableItem.paging.page = 1;
                 await this.tableReload();
             }
         } else {
             this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+
+            if (this.filterData.courseName.length === 0) {
+                this.filterData.courseName = this.filterOption.courseName;
+            }
+
             this.filterData['dateTime'] = [];
             this.tableItem.paging.page = 1;
             await this.tableReload();
@@ -812,7 +827,7 @@ export default class VuePageClass extends Vue {
 
             return null;
         }
-
+        console.log('apiResult.result.paging', apiResult.result.paging);
         this.tableItem.paging = apiResult.result.paging;
 
         this.tableSetData(apiResult.result.results.rows);

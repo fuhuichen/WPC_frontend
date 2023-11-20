@@ -679,17 +679,32 @@ export default class VuePageClass extends Vue {
                     this.dialogData.showCancelButton = false;
                 } else {
                     this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+
+                    if (this.filterData.site.length === 0) {
+                        this.filterData.site = this.siteOptions;
+                    }
+
                     this.filterData['dateTime'] = [...this.filterDataTemp['dateTime']];
                     this.tableItem.paging.page = 1;
                     await this.tableReload();
                 }
             } else {
                 this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+
+                if (this.filterData.site.length === 0) {
+                    this.filterData.site = this.siteOptions;
+                }
+
                 this.tableItem.paging.page = 1;
                 await this.tableReload();
             }
         } else {
             this.filterData = JSON.parse(JSON.stringify({ ...this.filterDataTemp }));
+
+            if (this.filterData.site.length === 0) {
+                this.filterData.site = this.siteOptions;
+            }
+
             this.filterData['dateTime'] = [];
             this.tableItem.paging.page = 1;
             await this.tableReload();
